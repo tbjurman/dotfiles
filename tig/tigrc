@@ -1,0 +1,26 @@
+set main-view  = line-number:no,interval=5 id:yes date:default author:full commit-title:yes,graph,refs,overflow=no
+#set line-graphics = utf-8
+
+bind main C ?git cherry-pick -x %(commit)
+bind diff <Ctrl-f> scroll-page-down
+bind diff <Ctrl-b> scroll-page-up
+bind main <Ctrl-f> scroll-page-down
+bind main <Ctrl-b> scroll-page-up
+bind blame <Ctrl-f> scroll-page-down
+bind blame <Ctrl-b> scroll-page-up
+bind help <Ctrl-f> scroll-page-down
+bind help <Ctrl-b> scroll-page-up
+bind blob <Ctrl-f> scroll-page-down
+bind blob <Ctrl-b> scroll-page-up
+bind stage <Ctrl-f> scroll-page-down
+bind stage <Ctrl-b> scroll-page-up
+bind status <Ctrl-f> scroll-page-down
+bind status <Ctrl-b> scroll-page-up
+bind refs <Ctrl-f> scroll-page-down
+bind refs <Ctrl-b> scroll-page-up
+bind log <Ctrl-f> scroll-page-down
+bind log <Ctrl-b> scroll-page-up
+
+color date cyan default
+color diff-stat cyan default
+color diff-index cyan default
