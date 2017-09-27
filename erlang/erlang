@@ -1,0 +1,2 @@
+code:add_path("/Users/tbjurman/dev/ext/edbg/ebin").
+code:add_path("/Users/tbjurman/dev/ext/edbg/deps/pp_record/ebin").

@@ -1,0 +1,20 @@
+[user]
+    name = Tomas Bjurman
+    email = tbjurman@tail-f.com
+[alias]
+    st = status -uno
+    ; hist = log --oneline --graph --decorate
+    ; history = log --oneline --graph --decorate --all
+    hist = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(cyan)<%an>%Creset' --abbrev-commit
+    history = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(cyan)<%an>%Creset' --abbrev-commit --all
+    ls = ls-tree HEAD
+    # svnlog = svn log --oneline --show-commit
+[push]
+    default = simple
+[core]
+    excludesfile = /Users/tbjurman/.gitignore
+#    pager = less --chop-long-lines
+[diff]
+	tool = vimdiff
+[difftool]
+	prompt = false
