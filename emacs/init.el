@@ -58,6 +58,14 @@
 ;; Rebind C-x C-b to (ibuffer)
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 
+;; Copy to remote using rpbcopy
+(defun tb-rpbcopy (text &optional push)
+  (let ((process-connection-type nil))
+    (let ((proc (start-process "rpbcopy" nil "rpbcopy")))
+      (process-send-string proc text)
+      (process-send-eof proc))))
+(setq interprogram-cut-function 'tb-rpbcopy)
+
 ;; --- Vim style stuff (begin) ---
 ;; Open new line below like Vim(tm) does
 (defun tb-open-line-below ()
