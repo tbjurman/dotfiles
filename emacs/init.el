@@ -85,8 +85,8 @@
     (newline-and-indent)))
 
 ;; And finally bind them to C-o and M-o
-(global-set-key (kbd "C-o") 'tb-open-line-below)
-(global-set-key (kbd "M-o") 'tb-open-line-above)
+(global-set-key (kbd "M-o") 'tb-open-line-below)
+(global-set-key (kbd "C-M-o") 'tb-open-line-above)
 ;; --- Vim style stuff (end) ---
 
 (use-package init-ido)
