@@ -33,6 +33,9 @@
 ;; Enable use-package
 (eval-when-compile (require 'use-package))
 
+;; Prefer UTF-8
+(prefer-coding-system 'utf-8)
+
 ;; Turn off TABS
 (setq-default indent-tabs-mode nil)
 
@@ -48,6 +51,12 @@
 
 ;; Column number in status bar
 (column-number-mode)
+
+;; Whitespace for programming modes
+(defun tb-ws-prog ()
+  (setq whitespace-style '(face trailing tabs lines-tail empty))
+  (whitespace-mode))
+(add-hook 'prog-mode-hook 'tb-ws-prog)
 
 ;; Revert buffer
 (defun tb-revert-buffer ()
