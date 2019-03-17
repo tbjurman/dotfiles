@@ -108,10 +108,14 @@ syntax on
 " set t_Co=256
 " au VimEnter * colorscheme babymate256
 " colorscheme babymate256
-" colorscheme jellybeans
-colorscheme alduin
-hi ColorColumn ctermbg=brown
+" LAST ONE USED: colorscheme jellybeans
+" colorscheme alduin
 " set background=dark
+"
+" LIGHT MODE
+colorscheme lightcolors
+hi ColorColumn ctermbg=brown
+hi LineNr ctermfg=lightgray
 
 let g:SuperTabDefaultCompletionType = "context"
 set completeopt=menuone,longest,preview
@@ -249,6 +253,13 @@ let g:pymode_rope = 0
 "Values may be chosen from: `pylint`, `pep8`, `mccabe`, `pep257`, `pyflakes`.
 let g:pymode_lint_checkers = ['pyflakes', 'pep8', 'naming', 'mccabe']
 nnoremap <F7> :PymodeLint<CR>
+
+" GitGutter colors (LIGHT)
+" hi SignColumn ctermbg=gray
+" hi GitGutterAdd ctermbg=gray ctermfg=green
+" hi GitGutterChange ctermbg=gray ctermfg=yellow
+" hi GitGutterDelete ctermbg=gray ctermfg=red
+" hi GitGutterChangeDelete ctermbg=gray ctermfg=blue
 
 " Deoplete
 " let g:deoplete#enable_at_startup = 1
