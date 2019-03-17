@@ -58,6 +58,14 @@
 ;; Rebind C-x C-b to (ibuffer)
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 
+;; Copy to OS X clipboard using pbcopy
+(defun tb-pbcopy (text &optional push)
+  (let ((process-connection-type nil))
+    (let ((proc (start-process "pbcopy" nil "pbcopy")))
+      (process-send-string proc text)
+      (process-send-eof proc))))
+(setq interprogram-cut-function 'tb-pbcopy)
+
 ;; --- Vim style stuff (begin) ---
 ;; Open new line below like Vim(tm) does
 (defun tb-open-line-below ()
