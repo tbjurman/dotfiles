@@ -18,3 +18,7 @@
 	tool = vimdiff
 [difftool]
 	prompt = false
+[merge]
+	renamelimit = 20480
+[status]
+        showUntrackedFiles = no
