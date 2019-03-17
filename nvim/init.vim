@@ -7,11 +7,11 @@ if has('vim_starting')
   endif
 
   " Required:
-  set runtimepath+=/Users/tbjurman/.nvim/bundle/neobundle.vim/
+  set runtimepath+=/home/tbjurman/.nvim/bundle/neobundle.vim/
 endif
 
 " Required:
-call neobundle#begin(expand('/Users/tbjurman/.nvim/bundle'))
+call neobundle#begin(expand('/home/tbjurman/.nvim/bundle'))
 
 " Let NeoBundle manage NeoBundle
 " Required:
@@ -35,12 +35,17 @@ NeoBundle 'bling/vim-airline'
 NeoBundle 'vim-airline/vim-airline-themes'
 NeoBundle 'airblade/vim-gitgutter'
 NeoBundle 'jceb/vim-orgmode'
-NeoBundle 'tpope/vim-speeddating'
+" NeoBundle 'tpope/vim-speeddating'
 NeoBundle 'tbjurman/vim-yang'
 NeoBundle 'tbjurman/vim-lux'
 NeoBundle 'jlanzarotta/bufexplorer'
 NeoBundle 'grep.vim'
 NeoBundle 'neomake/neomake'
+NeoBundle 'rust-lang/rust.vim'
+NeoBundle 'jreybert/vimagit'
+NeoBundle 'mileszs/ack.vim'
+NeoBundle 'vim-erlang/vim-erlang-skeletons'
+NeoBundle 'kshenoy/vim-signature'
 " NeoBundle 'tpope/vim-dispatch'
 " NeoBundle 'radenling/vim-dispatch-neovim'
 " NeoBundle 'shougo/deoplete.nvim'
@@ -73,7 +78,7 @@ augroup indent
     au BufNewFile,BufRead *.cs,*.pl set sts=4 sw=4 et
     au BufNewFile,BufRead *.py set colorcolumn=80
     au BufNewFile,BufRead *.cpp,*.c,*.h set sts=4 sw=4 sts=4 et colorcolumn=80
-    au BufNewFile,BufRead *.xsl,*.xml,*.wsdl,*.wsdd,*.conf,*.config,*.conf.sample set ft=xml ts=4 sts=4 sw=4 et
+    au BufNewFile,BufRead *.xsl,*.xml,*.wsdl,*.wsdd,*.conf,*.config,*.conf.sample set ft=xml ts=2 sts=2 sw=2 et
     au BufNewFile,BufRead *.html set ft=html sts=4 sw=4 et
     au BufNewFile,BufRead *.css set ft=css sts=4 sw=4 et
     au BufNewFile,BufRead *.js set ft=javascript sts=4 sw=4 et
@@ -85,6 +90,7 @@ augroup indent
     au BufNewFile,BufRead setup.rules* set ft=hog ts=8 sts=8 sw=8 noet
     au BufNewFile,BufRead *.md set ft=markdown ts=4 sts=4 sw=4 et
     au BufNewFile,BufRead init.vim set ft=vim ts=2 sts=2 sw=2 et
+    au BufNewFile,BufRead *.fish set ts=4 sts=4 sw=4 et
     au FileType python set omnifunc=pythoncomplete#Complete
     au BufNewFile,BufRead ft=sh set ts=4 sts=4 sw=4 et
 augroup END
@@ -109,9 +115,26 @@ syntax on
 " au VimEnter * colorscheme babymate256
 " colorscheme babymate256
 " colorscheme jellybeans
-colorscheme alduin
-hi ColorColumn ctermbg=brown
-" set background=dark
+colorscheme scheakur
+" colorscheme znake
+" colorscheme cake16
+" colorscheme alduin
+" colorscheme pacific
+hi Comment cterm=italic
+hi Normal ctermbg=None
+hi LineNr ctermbg=255
+hi erlangLocalFuncCall ctermfg=0 cterm=bold
+" hi ColorColumn ctermbg=brown
+" hi Search ctermbg=black ctermfg=yellow
+" hi LineNr ctermbg=lightgray ctermfg=white
+" set background=light
+"
+" GitGutter colors (LIGHT)
+" hi SignColumn ctermbg=gray
+" hi GitGutterAdd ctermbg=gray ctermfg=green
+" hi GitGutterChange ctermbg=gray ctermfg=yellow
+" hi GitGutterDelete ctermbg=gray ctermfg=red
+" hi GitGutterChangeDelete ctermbg=gray ctermfg=blue
 
 let g:SuperTabDefaultCompletionType = "context"
 set completeopt=menuone,longest,preview
@@ -202,7 +225,7 @@ command! ToggleBgColor :call ToggleBgColor()
 
 iab TIME <C-R>=strftime("%c")<CR>
 
-nnoremap <leader>liof yiwo?liof("<ESC>pa: ~p~n", [<ESC>pa]),<ESC>
+nnoremap <leader>liof yiwo?liof("<ESC>pa = ~p~n", [<ESC>pa]),<ESC>
 
 " map tComment
 nnoremap <leader>c :TComment<cr>
@@ -218,8 +241,8 @@ let g:netrw_winsize = 20
 let g:netrw_liststyle = 3
 
 " vim-erlang-skeletons
-" let g:erl_author = "Tomas Bjurman"
-" let g:erl_company = "Cisco"
+let g:erl_author = "Tomas Bjurman"
+let g:erl_company = "Cisco"
 
 " tweek vim-table-mode corners
 let g:table_mode_corner = '+'
@@ -254,7 +277,8 @@ nnoremap <F7> :PymodeLint<CR>
 " let g:deoplete#enable_at_startup = 1
 
 " Airline themes
-let g:airline_theme='tomorrow'
+" let g:airline_theme='tomorrow'
+let g:airline_theme='sol'
 
 " Define command :R which acts like :r but reads the result into a new
 " buffer
@@ -329,6 +353,30 @@ function! Dpaste()
 endfunction
 
 command! -range Dpaste :call Dpaste()
+
+" Remote pbcopy
+function! Rpbcopy()
+  let l:tempname = tempname()
+  call writefile(s:get_visual_selection(), l:tempname)
+  let l:cmd="cat " . l:tempname . " | rpbcopy"
+  let l:tmp = system(l:cmd)
+endfunction
+
+command! -range Rpbcopy :call Rpbcopy()
+
+" map Rpbcopy
+vnoremap <leader>y :Rpbcopy<cr>
+
+function! ExternalExec(cmd)
+  let l:res = system(a:cmd)
+  copen
+  setlocal modifiable
+  setlocal buftype=nofile
+  call append(0, l:res)
+  setlocal nomodifiable
+endfunction
+
+command! -nargs=+ Eex :call ExternalExec(<args>)
 
 
 " Neomake statusline Spinner
