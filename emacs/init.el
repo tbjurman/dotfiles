@@ -46,6 +46,41 @@
 (global-linum-mode t)
 (setq linum-format "%4d \u2502 ")
 
+;; Column number in status bar
+(column-number-mode)
+
+;; Revert buffer
+(defun tb-revert-buffer ()
+  (interactive)
+  (revert-buffer t t t)
+  (message (concat "Reverted buffer " (buffer-name))))
+
+;; Rebind C-x C-b to (ibuffer)
+(global-set-key (kbd "C-x C-b") 'ibuffer)
+
+;; --- Vim style stuff (begin) ---
+;; Open new line below like Vim(tm) does
+(defun tb-open-line-below ()
+  "Open a new line below the current point and indent."
+  (interactive)
+  (let ((oldpos (point)))
+    (end-of-line)
+    (newline-and-indent)))
+
+;; Open new line above like Vim(tm) does
+(defun tb-open-line-above ()
+  "Open a new line above the current line and indent."
+  (interactive)
+  (let ((oldpos (point)))
+    (previous-line)
+    (end-of-line)
+    (newline-and-indent)))
+
+;; And finally bind them to C-o and M-o
+(global-set-key (kbd "C-o") 'tb-open-line-below)
+(global-set-key (kbd "M-o") 'tb-open-line-above)
+;; --- Vim style stuff (end) ---
+
 (use-package init-ido)
 ;; (use-package init-ivy)
 ;; (use-package init-company)
