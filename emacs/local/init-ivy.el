@@ -1,5 +1,6 @@
 (require 'ivy)
 (use-package ivy
+  :ensure t
   :diminish (ivy-mode . "")
   :init (ivy-mode 1) ; globally at startup
   :config

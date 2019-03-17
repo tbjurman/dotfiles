@@ -46,12 +46,10 @@
 (global-linum-mode t)
 (setq linum-format "%4d \u2502 ")
 
-;; Turn ido-mode on
-;(require 'ido)
-(ido-mode t)
-
+(use-package init-ido)
 ;; (use-package init-ivy)
 ;; (use-package init-company)
 (use-package lux-mode)
 (use-package yang-mode)
 (use-package init-magit)
+(use-package init-erlang)
