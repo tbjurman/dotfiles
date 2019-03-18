@@ -13,7 +13,7 @@
  '(indent-tabs-mode nil)
  '(package-selected-packages
    (quote
-    (smex magit company ivy-hydra erlang creamsody-theme base16-theme ahungry-theme))))
+    (git-gutter smex magit company ivy-hydra erlang creamsody-theme base16-theme ahungry-theme))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -49,11 +49,13 @@
 (save-place-mode 1)
 
 ;; Line numbers
-(global-linum-mode t)
-(setq linum-format "%4d \u2502 ")
+(global-display-line-numbers-mode t)
 
 ;; Column number in status bar
 (column-number-mode)
+
+;; Git-gutter
+(global-git-gutter-mode 1)
 
 ;; Whitespace for programming modes
 (defun tb-ws-prog ()
