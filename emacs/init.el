@@ -48,14 +48,20 @@
 ;; Remeber file positions
 (save-place-mode 1)
 
+;; Verical split (possibly FIXME)
+(setq split-height-threshold nil)
+
 ;; Line numbers
-(global-display-line-numbers-mode t)
+;;(global-display-line-numbers-mode t)
 
 ;; Column number in status bar
 (column-number-mode)
 
 ;; Git-gutter
 (global-git-gutter-mode 1)
+(global-set-key (kbd "M-]") 'git-gutter:next-hunk)
+(global-set-key (kbd "M-[") 'git-gutter:previous-hunk)
+(global-set-key (kbd "M-\\") 'git-gutter:popup-hunk)
 
 ;; Whitespace for programming modes
 (defun tb-ws-prog ()
