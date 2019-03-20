@@ -13,13 +13,13 @@
  '(indent-tabs-mode nil)
  '(package-selected-packages
    (quote
-    (git-gutter smex magit company ivy-hydra erlang creamsody-theme base16-theme ahungry-theme))))
+    (markdown-mode git-gutter smex magit company ivy-hydra erlang creamsody-theme base16-theme ahungry-theme))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(font-lock-comment-face ((t (:foreground "color-246" :slant italic)))))
 
 ;; === TB CUSTOMIZATION START ===
 
@@ -78,6 +78,9 @@
 ;; Rebind C-x C-b to (ibuffer)
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 
+;; Bind uncomment-region
+(global-set-key (kbd "C-c C-r") 'uncomment-region)
+
 ;; Copy to remote using rpbcopy
 (defun tb-rpbcopy (text &optional push)
   (let ((process-connection-type nil))
@@ -85,6 +88,10 @@
       (process-send-string proc text)
       (process-send-eof proc))))
 (setq interprogram-cut-function 'tb-rpbcopy)
+
+(defun tb-rpbpaste ()
+  (shell-command-to-string "rpbpaste"))
+(setq interprogram-paste-function 'tb-rpbpaste)
 
 ;; --- Vim style stuff (begin) ---
 ;; Open new line below like Vim(tm) does
