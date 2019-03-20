@@ -84,13 +84,14 @@
 ;; Copy to remote using rpbcopy
 (defun tb-rpbcopy (text &optional push)
   (let ((process-connection-type nil))
-    (let ((proc (start-process "rpbcopy" nil "rpbcopy")))
+    (let ((proc (start-process "rpb-copy" nil "rpb")))
       (process-send-string proc text)
       (process-send-eof proc))))
 (setq interprogram-cut-function 'tb-rpbcopy)
 
+;; Paste from remote using rpb
 (defun tb-rpbpaste ()
-  (shell-command-to-string "rpbpaste"))
+  (shell-command-to-string "rpb p"))
 (setq interprogram-paste-function 'tb-rpbpaste)
 
 ;; --- Vim style stuff (begin) ---
