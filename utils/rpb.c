@@ -13,26 +13,39 @@
 #define PASTE_PATTERN "!@#999$%^"
 #define PASTE_PATTERN_SIZE 9
 
-void ok_or_die(int res, const char *msg)
+int do_or_die(int res, const char *msg)
 {
   if (res < 0) {
     perror(msg);
     exit(1);
   }
+  return res;
 }
+
+/* Could improve performance for small packages.
+   Probably won't affect localhost at all.
 
 void turn_off_nagle(int sock)
 {
   int flag = 1;
-  int res = setsockopt(sock, IPPROTO_TCP, TCP_NODELAY,
-                       (char *)&flag, sizeof(flag));
-  ok_or_die(res, "failed to set TCP_NODELAY");
+  setsockopt(sock, IPPROTO_TCP, TCP_NODELAY,
+             (char *)&flag, sizeof(flag));
 }
+*/
 
-int create_socket(void)
+int connect_server()
 {
-  int sock = socket(AF_INET, SOCK_STREAM, 0);
-  ok_or_die(sock, "failed to create socket");
+  int sock;
+  struct sockaddr_in addr;
+
+  memset(&addr, 0, sizeof(addr));
+  addr.sin_family = AF_INET;
+  addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+  addr.sin_port = htons(PORT);
+
+  sock = do_or_die(socket(AF_INET, SOCK_STREAM, 0), "failed to create socket");
+  do_or_die(connect(sock, (struct sockaddr*)&addr, sizeof(addr)),
+            "failed to connect to " IP ":" STRPORT);
   return sock;
 }
 
@@ -42,54 +55,38 @@ void send_all(int sock, const char *buf, size_t count)
   ssize_t stmp;
 
   while (sent < count) {
-    stmp = write(sock, buf + sent, count);
-    ok_or_die(stmp, "failed to send data to server");
+    stmp = do_or_die(write(sock, buf + sent, count),
+                     "failed to send data to server");
     sent += stmp;
     count -= stmp;
   }
 }
 
-int connect_server()
+void stdin_to_remote_pb(int sock)
 {
-  int sock;
-  int res;
-  struct sockaddr_in addr;
-
-  memset(&addr, 0, sizeof(addr));
-  addr.sin_family = AF_INET;
-  addr.sin_addr.s_addr = inet_addr("127.0.0.1");
-  addr.sin_port = htons(PORT);
-
-  sock = create_socket();
-  turn_off_nagle(sock);
-  res = connect(sock, (struct sockaddr*)&addr, sizeof(addr));
-  ok_or_die(res, "failed to connect to " IP ":" STRPORT);
-
-  return sock;
-}
-
-void send_stdin(int sock)
-{
-  size_t bytes_read;
+  size_t brd;
   char buf[BUF_SIZE];
 
-  while (!feof(stdin)) {
-    bytes_read = fread(&buf, 1, BUF_SIZE, stdin);
-    if (bytes_read > 0) {
-      send_all(sock, buf, bytes_read);
-    }
+  while ((brd = read(STDIN_FILENO, &buf, BUF_SIZE)) > 0) {
+    send_all(sock, buf, brd);
   }
 }
 
-void read_all(int sock)
+void remote_pb_to_stdout(int sock)
 {
-  size_t bytes_read;
+  size_t brd;
+  size_t bwr;
+  size_t bwr_tot;
   char buf[BUF_SIZE];
 
   send_all(sock, PASTE_PATTERN, PASTE_PATTERN_SIZE);
 
-  while ((bytes_read = read(sock, buf, BUF_SIZE)) > 0) {
-      fwrite(buf, bytes_read, 1, stdout);
+  while ((brd = read(sock, buf, BUF_SIZE)) > 0) {
+    bwr_tot = 0;
+    while ((bwr = write(STDOUT_FILENO, buf + bwr_tot, brd - bwr_tot)) > 0 &&
+           bwr_tot < brd) {
+      bwr_tot += bwr;
+    }
   }
 }
 
@@ -98,9 +95,9 @@ int main(int argc, char **argv)
   int sock = connect_server();
 
   if (argc > 1 && *argv[1] == 'p') {
-    read_all(sock);
+    remote_pb_to_stdout(sock);
   } else {
-    send_stdin(sock);
+    stdin_to_remote_pb(sock);
   }
   close(sock);
   return 0;
