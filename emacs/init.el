@@ -76,6 +76,19 @@
   (revert-buffer t t t)
   (message (concat "Reverted buffer " (buffer-name))))
 
+;; Join line below point with current line
+(defun tb-join-line-below ()
+  "Joins the line below point with the current line."
+  (interactive)
+  (move-end-of-line nil)
+  (delete-char 1)
+  (just-one-space))
+
+;; Bind M-j to tb-join-line-below
+(global-set-key (kbd "M-j") 'tb-join-line-below)
+;; Bind M-J to to indent-new-comment-line
+(global-set-key (kbd "M-J") 'indent-new-comment-line)
+
 ;; Rebind C-x C-b to (ibuffer)
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 
