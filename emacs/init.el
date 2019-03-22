@@ -93,7 +93,7 @@
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 
 ;; Bind uncomment-region
-(global-set-key (kbd "C-c C-r") 'uncomment-region)
+(global-set-key (kbd "C-c C-u") 'uncomment-region)
 
 ;; Open file under cursor
 (global-set-key (kbd "C-x F") 'find-file-at-point)
