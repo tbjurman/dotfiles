@@ -31,8 +31,11 @@
 ;; Setup load-path to ~/.emacs.d/local
 (add-to-list 'load-path (expand-file-name "local" user-emacs-directory))
 
-;; Hide menu bar
-(menu-bar-mode -1)
+;; Show menu bar
+(menu-bar-mode 1)
+
+;; Hide tool bar (if running GUI)
+(tool-bar-mode 0)
 
 ;; Enable use-package
 (eval-when-compile (require 'use-package))
