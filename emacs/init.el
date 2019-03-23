@@ -65,29 +65,18 @@
 (global-set-key (kbd "M-\\") 'git-gutter:popup-hunk)
 
 ;; Whitespace for programming modes
-(defun tb-ws-prog ()
+(defun tb-prog-mode-hook ()
   (setq whitespace-style '(face trailing tabs lines-tail empty))
-  (whitespace-mode))
-(add-hook 'prog-mode-hook 'tb-ws-prog)
+  (whitespace-mode)
+  (which-function-mode)
+  (auto-fill-mode))
+(add-hook 'prog-mode-hook 'tb-prog-mode-hook)
 
 ;; Revert buffer
 (defun tb-revert-buffer ()
   (interactive)
   (revert-buffer t t t)
   (message (concat "Reverted buffer " (buffer-name))))
-
-;; Join line below point with current line
-(defun tb-join-line-below ()
-  "Joins the line below point with the current line."
-  (interactive)
-  (move-end-of-line nil)
-  (delete-char 1)
-  (just-one-space))
-
-;; Bind M-j to tb-join-line-below
-(global-set-key (kbd "M-j") 'tb-join-line-below)
-;; Bind M-J to to indent-new-comment-line
-(global-set-key (kbd "M-J") 'indent-new-comment-line)
 
 ;; Rebind C-x C-b to (ibuffer)
 (global-set-key (kbd "C-x C-b") 'ibuffer)
@@ -111,28 +100,34 @@
   (shell-command-to-string "rpb p"))
 (setq interprogram-paste-function 'tb-rpbpaste)
 
-;; --- Vim style stuff (begin) ---
+;; --- Vim style stuff (begin) ---------------------------------------
 ;; Open new line below like Vim(tm) does
-(defun tb-open-line-below ()
-  "Open a new line below the current point and indent."
-  (interactive)
-  (let ((oldpos (point)))
-    (end-of-line)
-    (newline-and-indent)))
+;; (defun tb-open-line-below ()
+;;   "Open a new line below the current point and indent."
+;;   (interactive)
+;;   (let ((oldpos (point)))
+;;     (end-of-line)
+;;     (newline-and-indent)))
 
-;; Open new line above like Vim(tm) does
-(defun tb-open-line-above ()
-  "Open a new line above the current line and indent."
-  (interactive)
-  (let ((oldpos (point)))
-    (previous-line)
-    (end-of-line)
-    (newline-and-indent)))
+;; ;; Open new line above like Vim(tm) does
+;; (defun tb-open-line-above ()
+;;   "Open a new line above the current line and indent."
+;;   (interactive)
+;;   (let ((oldpos (point)))
+;;     (previous-line)
+;;     (end-of-line)
+;;     (newline-and-indent)))
 
-;; And finally bind them to C-o and M-o
-(global-set-key (kbd "M-o") 'tb-open-line-below)
-(global-set-key (kbd "C-M-o") 'tb-open-line-above)
-;; --- Vim style stuff (end) ---
+;; Join line below point with current line
+(defun tb-join-line-below ()
+  "Joins the line below point with the current line."
+  (interactive)
+  (move-end-of-line nil)
+  (delete-char 1)
+  (just-one-space))
+;; Bind M-j to tb-join-line-below
+(global-set-key (kbd "M-j") 'tb-join-line-below)
+;; --- Vim style stuff (end) -----------------------------------------
 
 (use-package init-ido)
 ;; (use-package init-ivy)
