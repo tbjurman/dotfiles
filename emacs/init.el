@@ -106,9 +106,9 @@
       (process-send-eof proc))))
 (setq interprogram-cut-function 'tb-pbcopy)
 
-(defun tb-rpbpaste ()
-  (shell-command-to-string "rpbpaste"))
-(setq interprogram-paste-function 'tb-rpbpaste)
+(defun tb-pbpaste ()
+  (shell-command-to-string "pbpaste"))
+(setq interprogram-paste-function 'tb-pbpaste)
 
 ;; --- Vim style stuff (begin) ---
 ;; Open new line below like Vim(tm) does
