@@ -87,6 +87,9 @@
 ;; Open file under cursor
 (global-set-key (kbd "C-x F") 'find-file-at-point)
 
+;; Other window
+(global-set-key (kbd "M-o") 'other-window)
+
 ;; Copy to remote using rpbcopy
 (defun tb-rpbcopy (text &optional push)
   (let ((process-connection-type nil))
