@@ -72,7 +72,8 @@
   (setq whitespace-style '(face trailing tabs lines-tail empty))
   (whitespace-mode)
   (which-function-mode)
-  (auto-fill-mode))
+  (auto-fill-mode)
+  (show-paren-mode))
 (add-hook 'prog-mode-hook 'tb-prog-mode-hook)
 
 ;; Revert buffer
