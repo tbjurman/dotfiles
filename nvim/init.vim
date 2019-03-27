@@ -358,7 +358,7 @@ command! -range Dpaste :call Dpaste()
 function! Rpbcopy()
   let l:tempname = tempname()
   call writefile(s:get_visual_selection(), l:tempname)
-  let l:cmd="cat " . l:tempname . " | rpbcopy"
+  let l:cmd="cat " . l:tempname . " | rpb"
   let l:tmp = system(l:cmd)
 endfunction
 
