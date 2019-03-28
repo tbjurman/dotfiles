@@ -13,6 +13,7 @@ void mk_daemon_name(char *buf, const char *dir)
     c = dir[idx++];
     *buf++ = c == '/' ? '_' : c;
   }
+  *buf = 0;
 }
 
 int main(int argc, char **argv)
@@ -29,7 +30,7 @@ int main(int argc, char **argv)
   }
 
   args[j++] = "emacsclient";
-  args[j++] = "-a \"\"";
+  args[j++] = "--alternate-editor=";
   args[j++] = "-s";
   args[j++] = daemon_name_arg;
   args[j++] = "-t";
