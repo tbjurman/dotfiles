@@ -32,11 +32,13 @@
 ;; Setup load-path to ~/.emacs.d/local
 (add-to-list 'load-path (expand-file-name "local" user-emacs-directory))
 
-;; Hide menu bar
-(menu-bar-mode -1)
-
 ;; Enable use-package
 (eval-when-compile (require 'use-package))
+
+;; Make it lean and mean
+(menu-bar-mode 0)
+(setq inhibit-startup-screen 1)
+(defalias 'yes-or-no-p 'y-or-n-p)
 
 ;; Prefer UTF-8
 (prefer-coding-system 'utf-8)
@@ -70,7 +72,6 @@
   (setq whitespace-style '(face trailing tabs lines-tail empty))
   (whitespace-mode)
   (which-function-mode)
-  (auto-fill-mode)
   (show-paren-mode))
 (add-hook 'prog-mode-hook 'tb-prog-mode-hook)
 
@@ -90,7 +91,13 @@
 ;; Open file under cursor
 (global-set-key (kbd "C-x F") 'find-file-at-point)
 
-;; Copy to OS X clipboard using pbcopy
+;; Rebind M-z to 'zap-up-to-char (was 'zap-to-char)
+(global-set-key (kbd "M-z") 'zap-up-to-char)
+
+;; Redraw display
+(global-set-key (kbd "<f1>") 'redraw-display)
+
+;; Copy to pasteboard using pbcopy
 (defun tb-pbcopy (text &optional push)
   (let ((process-connection-type nil))
     (let ((proc (start-process "pbcopy" nil "pbcopy")))
