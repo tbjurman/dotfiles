@@ -55,7 +55,7 @@ end
 ##############################################################################
 # fish coloring
 ##############################################################################
-set fish_color_cwd blue
+set fish_color_cwd normal
 set fish_color_operator yellow
 set fish_color_escape yellow
 set fish_color_autosuggestion 999
