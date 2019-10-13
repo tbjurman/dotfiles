@@ -11,6 +11,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(case-fold-search nil)
+ '(git-gutter:diff-option "HEAD")
  '(indent-tabs-mode nil)
  '(package-selected-packages
    (quote
@@ -31,14 +32,13 @@
 ;; Setup load-path to ~/.emacs.d/local
 (add-to-list 'load-path (expand-file-name "local" user-emacs-directory))
 
-;; Show menu bar
-(menu-bar-mode 1)
-
-;; Hide tool bar (if running GUI)
-(tool-bar-mode 0)
-
 ;; Enable use-package
 (eval-when-compile (require 'use-package))
+
+;; Make it lean and mean
+(menu-bar-mode 0)
+(setq inhibit-startup-screen 1)
+(defalias 'yes-or-no-p 'y-or-n-p)
 
 ;; Prefer UTF-8
 (prefer-coding-system 'utf-8)
@@ -72,7 +72,6 @@
   (setq whitespace-style '(face trailing tabs lines-tail empty))
   (whitespace-mode)
   (which-function-mode)
-  (auto-fill-mode)
   (show-paren-mode))
 (add-hook 'prog-mode-hook 'tb-prog-mode-hook)
 
@@ -85,13 +84,20 @@
 ;; Rebind C-x C-b to (ibuffer)
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 
-;; Bind uncomment-region
+;; Bind region commenting globally
+(global-set-key (kbd "C-c C-c") 'comment-region)
 (global-set-key (kbd "C-c C-u") 'uncomment-region)
 
 ;; Open file under cursor
 (global-set-key (kbd "C-x F") 'find-file-at-point)
 
-;; Copy to OS X clipboard using pbcopy
+;; Rebind M-z to 'zap-up-to-char (was 'zap-to-char)
+(global-set-key (kbd "M-z") 'zap-up-to-char)
+
+;; Redraw display
+(global-set-key (kbd "<f1>") 'redraw-display)
+
+;; Copy to pasteboard using pbcopy
 (defun tb-pbcopy (text &optional push)
   (let ((process-connection-type nil))
     (let ((proc (start-process "pbcopy" nil "pbcopy")))
@@ -102,6 +108,32 @@
 (defun tb-pbpaste ()
   (shell-command-to-string "pbpaste"))
 (setq interprogram-paste-function 'tb-pbpaste)
+
+;; Window move together with tmux
+(defun windmove-emacs-or-tmux(dir tmux-cmd)
+  (interactive)
+  (if (ignore-errors (funcall (intern (concat "windmove-" dir))))
+      nil ;; Moving within emacs
+    (shell-command tmux-cmd)) ;; At edges, send command to tmux
+  )
+
+(global-set-key (kbd "M-P")
+                '(lambda ()
+                   (interactive)
+                   (windmove-emacs-or-tmux "up" "tmux select-pane -U")))
+(global-set-key (kbd "M-N")
+                '(lambda ()
+                   (interactive)
+                   (windmove-emacs-or-tmux "down" "tmux select-pane -D")))
+(global-set-key (kbd "M-F")
+                '(lambda ()
+                   (interactive)
+                   (windmove-emacs-or-tmux "right" "tmux select-pane -R")))
+(global-set-key (kbd "M-B")
+                '(lambda ()
+                   (interactive)
+                   (windmove-emacs-or-tmux "left"  "tmux select-pane -L")))
+
 
 ;; --- Vim style stuff (begin) ---------------------------------------
 ;; Open new line below like Vim(tm) does
