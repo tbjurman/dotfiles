@@ -10,18 +10,42 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(ansi-color-faces-vector
+   [default default default italic underline success warning error])
+ '(ansi-color-names-vector
+   ["#f5f5f5" "#ac4142" "#90a959" "#f4bf75" "#6a9fb5" "#aa759f" "#6a9fb5" "#303030"])
+ '(ansi-term-color-vector
+   [unspecified "#181818" "#ab4642" "#a1b56c" "#f7ca88" "#7cafc2" "#ba8baf" "#7cafc2" "#d8d8d8"])
  '(case-fold-search nil)
+ '(company-quickhelp-color-background "#4F4F4F")
+ '(company-quickhelp-color-foreground "#DCDCCC")
+ '(custom-safe-themes
+   (quote
+    ("2a998a3b66a0a6068bcb8b53cd3b519d230dd1527b07232e54c8b9d84061d48d" "146061a7ceea4ccc75d975a3bb41432382f656c50b9989c7dc1a7bb6952f6eb4" "e4486d0ad184fb7511e391b6ecb8c4d7e5ab29e2d33bc65403e2315dbacaa4aa" default)))
+ '(fci-rule-color "#383838")
  '(git-gutter:diff-option "HEAD")
+ '(ibuffer-formats
+   (quote
+    ((mark modified read-only locked " "
+           (name 35 35 :left :elide)
+           " "
+           (mode 16 16 :left :elide)
+           " " filename-and-process)
+     (mark " "
+           (name 16 -1)
+           " " filename))))
  '(indent-tabs-mode nil)
+ '(nrepl-message-colors
+   (quote
+    ("#CC9393" "#DFAF8F" "#F0DFAF" "#7F9F7F" "#BFEBBF" "#93E0E3" "#94BFF3" "#DC8CC3")))
  '(package-selected-packages
    (quote
-    (markdown-mode git-gutter smex magit company ivy-hydra erlang creamsody-theme base16-theme ahungry-theme))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(font-lock-comment-face ((t (:foreground "color-246" :slant italic)))))
+    (markdown-mode git-gutter smex magit company ivy-hydra erlang creamsody-theme base16-theme ahungry-theme)))
+ '(pdf-view-midnight-colors (quote ("#DCDCCC" . "#383838")))
+ '(pos-tip-background-color "#1A3734")
+ '(pos-tip-foreground-color "#FFFFC8")
+ '(red "#ffffff")
+ '(send-mail-function (quote smtpmail-send-it)))
 
 ;; === TB CUSTOMIZATION START ===
 
@@ -31,6 +55,11 @@
 
 ;; Setup load-path to ~/.emacs.d/local
 (add-to-list 'load-path (expand-file-name "local" user-emacs-directory))
+(add-to-list 'custom-theme-load-path (expand-file-name "themes" custom-theme-directory))
+
+;; Dark theme
+;; (setq zenburn-override-colors-alist '(("zenburn-bg"  . "#2a2a2a")))
+;; (load-theme 'zenburn t)
 
 ;; Enable use-package
 (eval-when-compile (require 'use-package))
@@ -56,7 +85,7 @@
 (setq split-height-threshold nil)
 
 ;; Line numbers
-;;(global-display-line-numbers-mode t)
+(global-display-line-numbers-mode t)
 
 ;; Column number in status bar
 (column-number-mode)
@@ -165,10 +194,40 @@
 (global-set-key (kbd "M-j") 'tb-join-line-below)
 ;; --- Vim style stuff (end) -----------------------------------------
 
+(setq-default c-basic-offset 4)
+
 (use-package init-ido)
 ;; (use-package init-ivy)
 ;; (use-package init-company)
 (use-package lux-mode)
-(use-package yang-mode)
+(use-package yang-mode
+  :config (setq c-basic-offset 2))
+(use-package cc-mode
+  :config (setq c-basic-offset 4))
 (use-package init-magit)
 (use-package init-erlang)
+(use-package smex
+  :ensure t
+  :bind (("M-x" . smex))
+  :config (smex-initialize))
+
+;; Color and font configuration - dark theme
+;; (use-package whitespace
+;;   :config (set-face-attribute 'whitespace-tab nil :background "#2c2c2c"))
+(use-package faces
+  :config
+  (set-face-attribute 'region nil :background "#ced872" :foreground "#000000"))
+(use-package isearch
+  :config
+  (set-face-attribute 'isearch nil :background "#ced872" :foreground "#000000"))
+(use-package ediff
+  :config
+  (setq ediff-split-window-function 'split-window-horizontally))
+(use-package font-lock
+  :config
+  (set-face-attribute 'font-lock-comment-face nil :foreground "color-246" :slant 'italic))
+;; Dark Mode
+;; (use-package diff-mode
+;;   :config
+;;   (set-face-attribute 'diff-added nil :foreground "#000000" :background "#446644")
+;;   (set-face-attribute 'diff-removed nil :foreground "#000000" :background "#bb4444"))

@@ -5,6 +5,7 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <netinet/tcp.h>
+#include <fcntl.h>
 
 #define IP "127.0.0.1"
 #define PORT 10001
@@ -22,16 +23,22 @@ int do_or_die(int res, const char *msg)
   return res;
 }
 
+void stderr_to_dev_null()
+{
+  int fd = do_or_die(open("/dev/null", O_WRONLY),
+                     "failed to open /dev/null");
+  do_or_die(dup2(STDERR_FILENO, fd), "failed to dup2 stderr");
+}
+
 /* Could improve performance for small packages.
    Probably won't affect localhost at all.
-
+*/
 void turn_off_nagle(int sock)
 {
   int flag = 1;
   setsockopt(sock, IPPROTO_TCP, TCP_NODELAY,
              (char *)&flag, sizeof(flag));
 }
-*/
 
 int connect_server()
 {
@@ -43,7 +50,9 @@ int connect_server()
   addr.sin_addr.s_addr = inet_addr("127.0.0.1");
   addr.sin_port = htons(PORT);
 
+  stderr_to_dev_null();
   sock = do_or_die(socket(AF_INET, SOCK_STREAM, 0), "failed to create socket");
+  turn_off_nagle(sock);
   do_or_die(connect(sock, (struct sockaddr*)&addr, sizeof(addr)),
             "failed to connect to " IP ":" STRPORT);
   return sock;

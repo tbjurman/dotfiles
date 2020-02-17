@@ -55,7 +55,9 @@ end
 ##############################################################################
 # fish coloring
 ##############################################################################
-set fish_color_cwd blue
+# (for light theme) set fish_color_cwd blue
+set fish_color_cwd cyan
 set fish_color_operator yellow
 set fish_color_escape yellow
-set fish_color_autosuggestion 999
+set fish_color_command yellow # for dark theme
+# (for light theme) set fish_color_autosuggestion 999

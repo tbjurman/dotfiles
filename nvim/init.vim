@@ -115,9 +115,9 @@ syntax on
 " au VimEnter * colorscheme babymate256
 " colorscheme babymate256
 " colorscheme jellybeans
-colorscheme scheakur
+" colorscheme scheakur
 " colorscheme znake
-" colorscheme cake16
+colorscheme cake16
 " colorscheme alduin
 " colorscheme pacific
 hi Comment cterm=italic
@@ -127,7 +127,7 @@ hi erlangLocalFuncCall ctermfg=0 cterm=bold
 " hi ColorColumn ctermbg=brown
 " hi Search ctermbg=black ctermfg=yellow
 " hi LineNr ctermbg=lightgray ctermfg=white
-" set background=light
+set background=light
 "
 " GitGutter colors (LIGHT)
 " hi SignColumn ctermbg=gray
