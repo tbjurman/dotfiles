@@ -58,8 +58,8 @@
 (add-to-list 'custom-theme-load-path (expand-file-name "themes" custom-theme-directory))
 
 ;; Dark theme
-;; (setq zenburn-override-colors-alist '(("zenburn-bg"  . "#2a2a2a")))
-;; (load-theme 'zenburn t)
+(setq zenburn-override-colors-alist '(("zenburn-bg"  . "#2a2a2a")))
+(load-theme 'zenburn t)
 
 ;; Enable use-package
 (eval-when-compile (require 'use-package))
@@ -212,8 +212,8 @@
   :config (smex-initialize))
 
 ;; Color and font configuration - dark theme
-;; (use-package whitespace
-;;   :config (set-face-attribute 'whitespace-tab nil :background "#2c2c2c"))
+(use-package whitespace
+  :config (set-face-attribute 'whitespace-tab nil :background "#2c2c2c"))
 (use-package faces
   :config
   (set-face-attribute 'region nil :background "#ced872" :foreground "#000000"))
@@ -227,7 +227,7 @@
   :config
   (set-face-attribute 'font-lock-comment-face nil :foreground "color-246" :slant 'italic))
 ;; Dark Mode
-;; (use-package diff-mode
-;;   :config
-;;   (set-face-attribute 'diff-added nil :foreground "#000000" :background "#446644")
-;;   (set-face-attribute 'diff-removed nil :foreground "#000000" :background "#bb4444"))
+(use-package diff-mode
+  :config
+  (set-face-attribute 'diff-added nil :foreground "#000000" :background "#77cc77")
+  (set-face-attribute 'diff-removed nil :foreground "#000000" :background "#bb4444"))
