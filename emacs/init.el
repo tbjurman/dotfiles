@@ -16,7 +16,7 @@
  '(indent-tabs-mode nil)
  '(package-selected-packages
    (quote
-    (yaml-mode rust-mode markdown-mode git-gutter smex magit company ivy-hydra erlang creamsody-theme base16-theme ahungry-theme))))
+    (realgud-lldb yaml-mode rust-mode markdown-mode git-gutter smex magit company ivy-hydra erlang creamsody-theme base16-theme ahungry-theme))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -172,3 +172,4 @@
 (use-package yang-mode)
 (use-package init-magit)
 (use-package init-erlang)
+(use-package realgud-lldb)
