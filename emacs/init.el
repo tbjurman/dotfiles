@@ -40,7 +40,7 @@
     ("#CC9393" "#DFAF8F" "#F0DFAF" "#7F9F7F" "#BFEBBF" "#93E0E3" "#94BFF3" "#DC8CC3")))
  '(package-selected-packages
    (quote
-    (markdown-mode git-gutter smex magit company ivy-hydra erlang creamsody-theme base16-theme ahungry-theme)))
+    (plantuml-mode ## markdown-mode git-gutter smex magit company ivy-hydra erlang creamsody-theme base16-theme ahungry-theme)))
  '(pdf-view-midnight-colors (quote ("#DCDCCC" . "#383838")))
  '(pos-tip-background-color "#1A3734")
  '(pos-tip-foreground-color "#FFFFC8")
@@ -103,6 +103,13 @@
   (which-function-mode)
   (show-paren-mode))
 (add-hook 'prog-mode-hook 'tb-prog-mode-hook)
+
+;; Bind key to org-capture
+;; (global-set-key (kbd "C-c n") (lambda () (interactive) (org-capture nil "n")))
+;; A nice template for capturing notes
+;; (setq org-capture-templates
+;;       '(("n" "Note" entry (file+headline "~/Documents/notes.org" "Notes")
+;;          "* NOTE %?\n  %i\n  %a")))
 
 ;; Revert buffer
 (defun tb-revert-buffer ()
@@ -196,12 +203,18 @@
 
 (setq-default c-basic-offset 4)
 
+(require 'yang-mode)
+(defun my-yang-mode-hook ()
+  "Configuration for YANG Mode. Add this to `yang-mode-hook'."
+  (progn
+    (setq c-basic-offset 2)))
+(add-hook 'yang-mode-hook 'my-yang-mode-hook)
+
+
 (use-package init-ido)
 ;; (use-package init-ivy)
 ;; (use-package init-company)
 (use-package lux-mode)
-(use-package yang-mode
-  :config (setq c-basic-offset 2))
 (use-package cc-mode
   :config (setq c-basic-offset 4))
 (use-package init-magit)
@@ -225,9 +238,18 @@
   (setq ediff-split-window-function 'split-window-horizontally))
 (use-package font-lock
   :config
-  (set-face-attribute 'font-lock-comment-face nil :foreground "color-246" :slant 'italic))
+  (set-face-attribute 'font-lock-comment-face nil :foreground "color-246"))
 ;; Dark Mode
 (use-package diff-mode
   :config
   (set-face-attribute 'diff-added nil :foreground "#000000" :background "#77cc77")
   (set-face-attribute 'diff-removed nil :foreground "#000000" :background "#bb4444"))
+
+(setq global-hl-line-sticky-mode t)
+(global-hl-line-mode t)
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
