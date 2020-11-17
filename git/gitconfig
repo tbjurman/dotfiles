@@ -11,6 +11,8 @@
     # svnlog = svn log --oneline --show-commit
 [push]
     default = simple
+[pull]
+    ff = only
 [core]
     excludesfile = /Users/tbjurman/.gitignore
 #    pager = less --chop-long-lines
