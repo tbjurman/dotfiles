@@ -11,12 +11,13 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(case-fold-search nil)
- '(custom-enabled-themes (quote (wombat)))
+ '(custom-enabled-themes '(solarized-light))
+ '(custom-safe-themes
+   '("d91ef4e714f05fff2070da7ca452980999f5361209e679ee988e3c432df24347" default))
  '(git-gutter:diff-option "HEAD")
  '(indent-tabs-mode nil)
  '(package-selected-packages
-   (quote
-    (realgud-lldb yaml-mode rust-mode markdown-mode git-gutter smex magit company ivy-hydra erlang creamsody-theme base16-theme ahungry-theme))))
+   '(solarized-theme realgud-lldb yaml-mode rust-mode markdown-mode git-gutter smex magit company ivy-hydra erlang creamsody-theme base16-theme ahungry-theme)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
