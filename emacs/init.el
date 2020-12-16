@@ -34,7 +34,9 @@
 (add-to-list 'load-path (expand-file-name "local" user-emacs-directory))
 
 ;; Enable use-package
-(eval-when-compile (require 'use-package))
+(eval-when-compile
+  (add-to-list 'load-path "/Users/tbjurman/dev/ext/use-package")
+  (require 'use-package))
 
 ;; Make it lean and mean
 (menu-bar-mode 0)
@@ -57,7 +59,7 @@
 (setq split-height-threshold nil)
 
 ;; Line numbers
-;;(global-display-line-numbers-mode t)
+(global-display-line-numbers-mode t)
 
 ;; Column number in status bar
 (column-number-mode)
@@ -97,6 +99,8 @@
 
 ;; Redraw display
 (global-set-key (kbd "<f1>") 'redraw-display)
+
+(global-hl-line-mode t)
 
 ;; Copy to pasteboard using pbcopy
 (defun tb-pbcopy (text &optional push)
