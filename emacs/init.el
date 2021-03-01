@@ -20,32 +20,28 @@
  '(company-quickhelp-color-background "#4F4F4F")
  '(company-quickhelp-color-foreground "#DCDCCC")
  '(custom-safe-themes
-   (quote
-    ("2a998a3b66a0a6068bcb8b53cd3b519d230dd1527b07232e54c8b9d84061d48d" "146061a7ceea4ccc75d975a3bb41432382f656c50b9989c7dc1a7bb6952f6eb4" "e4486d0ad184fb7511e391b6ecb8c4d7e5ab29e2d33bc65403e2315dbacaa4aa" default)))
+   '("2a998a3b66a0a6068bcb8b53cd3b519d230dd1527b07232e54c8b9d84061d48d" "146061a7ceea4ccc75d975a3bb41432382f656c50b9989c7dc1a7bb6952f6eb4" "e4486d0ad184fb7511e391b6ecb8c4d7e5ab29e2d33bc65403e2315dbacaa4aa" default))
  '(fci-rule-color "#383838")
  '(git-gutter:diff-option "HEAD")
  '(ibuffer-formats
-   (quote
-    ((mark modified read-only locked " "
+   '((mark modified read-only locked " "
            (name 35 35 :left :elide)
            " "
            (mode 16 16 :left :elide)
            " " filename-and-process)
      (mark " "
            (name 16 -1)
-           " " filename))))
+           " " filename)))
  '(indent-tabs-mode nil)
  '(nrepl-message-colors
-   (quote
-    ("#CC9393" "#DFAF8F" "#F0DFAF" "#7F9F7F" "#BFEBBF" "#93E0E3" "#94BFF3" "#DC8CC3")))
+   '("#CC9393" "#DFAF8F" "#F0DFAF" "#7F9F7F" "#BFEBBF" "#93E0E3" "#94BFF3" "#DC8CC3"))
  '(package-selected-packages
-   (quote
-    (plantuml-mode ## markdown-mode git-gutter smex magit company ivy-hydra erlang creamsody-theme base16-theme ahungry-theme)))
- '(pdf-view-midnight-colors (quote ("#DCDCCC" . "#383838")))
+   '(yaml-mode plantuml-mode ## markdown-mode git-gutter smex magit company ivy-hydra erlang creamsody-theme base16-theme ahungry-theme))
+ '(pdf-view-midnight-colors '("#DCDCCC" . "#383838"))
  '(pos-tip-background-color "#1A3734")
  '(pos-tip-foreground-color "#FFFFC8")
  '(red "#ffffff")
- '(send-mail-function (quote smtpmail-send-it)))
+ '(send-mail-function 'smtpmail-send-it))
 
 ;; === TB CUSTOMIZATION START ===
 
@@ -56,6 +52,9 @@
 ;; Setup load-path to ~/.emacs.d/local
 (add-to-list 'load-path (expand-file-name "local" user-emacs-directory))
 (add-to-list 'custom-theme-load-path (expand-file-name "themes" custom-theme-directory))
+
+;; (add-to-list 'term-file-aliases
+;;     '("st-256color" . "xterm-256color"))
 
 ;; Dark theme
 (setq zenburn-override-colors-alist '(("zenburn-bg"  . "#2a2a2a")))
@@ -136,14 +135,14 @@
 ;; Copy to remote using rpbcopy
 (defun tb-rpbcopy (text &optional push)
   (let ((process-connection-type nil))
-    (let ((proc (start-process "rpb-copy" nil "rpb")))
+    (let ((proc (start-process "xclip" nil "xclip" "-selection" "clipboard")))
       (process-send-string proc text)
-      (process-send-eof proc))))
+      (process-send-eof proc))))  
 (setq interprogram-cut-function 'tb-rpbcopy)
 
 ;; Paste from remote using rpb
 (defun tb-rpbpaste ()
-  (shell-command-to-string "rpb p"))
+  (shell-command-to-string "xclip -selection clipboard -o 2> /dev/null"))
 (setq interprogram-paste-function 'tb-rpbpaste)
 
 ;; Window move together with tmux
@@ -154,19 +153,19 @@
     (shell-command tmux-cmd)) ;; At edges, send command to tmux
   )
 
-(global-set-key (kbd "M-P")
+(global-set-key (kbd "C-M-P")
                 '(lambda ()
                    (interactive)
                    (windmove-emacs-or-tmux "up" "tmux select-pane -U")))
-(global-set-key (kbd "M-N")
+(global-set-key (kbd "C-M-N")
                 '(lambda ()
                    (interactive)
                    (windmove-emacs-or-tmux "down" "tmux select-pane -D")))
-(global-set-key (kbd "M-F")
+(global-set-key (kbd "C-M-F")
                 '(lambda ()
                    (interactive)
                    (windmove-emacs-or-tmux "right" "tmux select-pane -R")))
-(global-set-key (kbd "M-B")
+(global-set-key (kbd "C-M-B")
                 '(lambda ()
                    (interactive)
                    (windmove-emacs-or-tmux "left"  "tmux select-pane -L")))
