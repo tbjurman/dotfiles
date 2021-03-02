@@ -258,3 +258,63 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+
+;; -----------------------------------------------------------------------------
+;; -----------------------------------------------------------------------------
+;; -----------------------------------------------------------------------------
+;;  A hash table mapping from file names to stacks of vc-annotate calls
+(defvar vc-annotate-call-stacks (make-hash-table :test 'equal))
+
+;; Define a structure type to store the details needed to redisplay a revision
+;; rev: the revision annotated
+;; point: the cursor point when the annotation was first displayed (perhaps this
+;;        could be improved to be the last point moved to on the annotation)
+(require 'cl-lib)
+(cl-defstruct annotation-details rev point)
+
+;; The vc-annotate-mode-hook can't be used because it is run before
+;; the vc-annotate-parent-* variables are set.
+;;
+;; So instead use a advise function for vc-annotate, called before
+;; vc-annotate, which stores the arguments on the appropriate stack.
+(defun record-annotation-call (file rev &optional display-mode buf move-point-to vc-bk)
+  (message "Recording annotation: file %S rev %S" file rev)
+  (let ((annotation-stack (gethash file vc-annotate-call-stacks)))
+    (push (make-annotation-details :rev rev
+                                   :point move-point-to)
+          annotation-stack)
+    (puthash file annotation-stack vc-annotate-call-stacks)))
+
+;; DISABLED!!!
+;; (advice-add 'vc-annotate :before #'record-annotation-call)
+
+(defun vc-annotate-previous-annotation ()
+  "Go back to showing the annotation of the previous displayed annotation"
+  (interactive)
+  (when (not (equal major-mode 'vc-annotate-mode))
+    (error "Can only be used in vc-annotate-mode"))
+  (let ((annotation-stack (gethash vc-annotate-parent-file vc-annotate-call-stacks)))
+       (when (< (length annotation-stack) 2)
+         (error "No previous vc-annotate calls"))
+       ;; The entry at the top of the stack is the current annotation.
+       ;; So need to pop two entries to get the previous annotation.
+       (let
+           ((curr-annotation (pop annotation-stack))
+            (prev-annotation (pop annotation-stack)))
+         ;; Update the annotation-stack in the hash table after removing the entries.
+         ;; The entry for the one we're returning to will be re-added by
+         ;; the advise function for vc-annotate.
+         (puthash vc-annotate-parent-file annotation-stack vc-annotate-call-stacks)
+
+         (vc-annotate vc-annotate-parent-file
+                      (annotation-details-rev prev-annotation)
+                      vc-annotate-parent-display-mode
+                      (current-buffer)
+                      (annotation-details-point prev-annotation)
+                      vc-annotate-backend))))
+
+
+;; -----------------------------------------------------------------------------
+(add-hook 'vc-annotate-mode-hook
+  (lambda ()
+   (local-set-key (kbd "b") 'vc-annotate-previous-annotation)))
