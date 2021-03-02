@@ -17,7 +17,7 @@
  '(git-gutter:diff-option "HEAD")
  '(indent-tabs-mode nil)
  '(package-selected-packages
-   '(solarized-theme realgud-lldb yaml-mode rust-mode markdown-mode git-gutter smex magit company ivy-hydra erlang creamsody-theme base16-theme ahungry-theme)))
+   '(sql-indent graphviz-dot-mode solarized-theme realgud-lldb yaml-mode rust-mode markdown-mode git-gutter smex magit company ivy-hydra erlang creamsody-theme base16-theme ahungry-theme)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
