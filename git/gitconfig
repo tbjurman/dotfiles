@@ -1,6 +1,6 @@
 [user]
     name = Tomas Bjurman
-    email = tbjurman@tail-f.com
+    email = tbjurman@cisco.com
 [alias]
     st = status -uno
     ; hist = log --oneline --graph --decorate
