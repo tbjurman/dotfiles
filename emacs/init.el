@@ -21,7 +21,7 @@
  '(company-quickhelp-color-foreground "#DCDCCC")
  '(custom-safe-themes
    (quote
-    ("2a998a3b66a0a6068bcb8b53cd3b519d230dd1527b07232e54c8b9d84061d48d" "146061a7ceea4ccc75d975a3bb41432382f656c50b9989c7dc1a7bb6952f6eb4" "e4486d0ad184fb7511e391b6ecb8c4d7e5ab29e2d33bc65403e2315dbacaa4aa" default)))
+    ("d91ef4e714f05fff2070da7ca452980999f5361209e679ee988e3c432df24347" "2a998a3b66a0a6068bcb8b53cd3b519d230dd1527b07232e54c8b9d84061d48d" "146061a7ceea4ccc75d975a3bb41432382f656c50b9989c7dc1a7bb6952f6eb4" "e4486d0ad184fb7511e391b6ecb8c4d7e5ab29e2d33bc65403e2315dbacaa4aa" default)))
  '(fci-rule-color "#383838")
  '(git-gutter:diff-option "HEAD")
  '(ibuffer-formats
@@ -40,7 +40,7 @@
     ("#CC9393" "#DFAF8F" "#F0DFAF" "#7F9F7F" "#BFEBBF" "#93E0E3" "#94BFF3" "#DC8CC3")))
  '(package-selected-packages
    (quote
-    (plantuml-mode ## markdown-mode git-gutter smex magit company ivy-hydra erlang creamsody-theme base16-theme ahungry-theme)))
+    (solarized-theme plantuml-mode ## markdown-mode git-gutter smex magit company ivy-hydra erlang creamsody-theme base16-theme ahungry-theme)))
  '(pdf-view-midnight-colors (quote ("#DCDCCC" . "#383838")))
  '(pos-tip-background-color "#1A3734")
  '(pos-tip-foreground-color "#FFFFC8")
@@ -58,8 +58,11 @@
 (add-to-list 'custom-theme-load-path (expand-file-name "themes" custom-theme-directory))
 
 ;; Dark theme
-(setq zenburn-override-colors-alist '(("zenburn-bg"  . "#2a2a2a")))
-(load-theme 'zenburn t)
+;;(setq zenburn-override-colors-alist '(("zenburn-bg"  . "#2a2a2a")))
+;;(load-theme 'zenburn t)
+
+;; Solarized light
+(load-theme 'solarized-light t)
 
 ;; Enable use-package
 (eval-when-compile (require 'use-package))
@@ -225,8 +228,10 @@
   :config (smex-initialize))
 
 ;; Color and font configuration - dark theme
-(use-package whitespace
-  :config (set-face-attribute 'whitespace-tab nil :background "#2c2c2c"))
+ (use-package whitespace
+   :config
+   (set-face-attribute 'whitespace-tab nil :foreground "#fcfcfc")
+   (set-face-attribute 'whitespace-line nil :background "#eeeeee"))
 (use-package faces
   :config
   (set-face-attribute 'region nil :background "#ced872" :foreground "#000000"))
@@ -242,8 +247,8 @@
 ;; Dark Mode
 (use-package diff-mode
   :config
-  (set-face-attribute 'diff-added nil :foreground "#000000" :background "#77cc77")
-  (set-face-attribute 'diff-removed nil :foreground "#000000" :background "#bb4444"))
+  (set-face-attribute 'diff-added nil :foreground "#000000" :background "#99cc99")
+  (set-face-attribute 'diff-removed nil :foreground "#000000" :background "#d07c7c"))
 
 (setq global-hl-line-sticky-mode t)
 (global-hl-line-mode t)
