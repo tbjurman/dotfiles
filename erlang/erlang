@@ -1,3 +1,2 @@
 code:add_path("/home/tbjurman/dev/git/ext/redbug/_build/default/lib/redbug/ebin").
-code:add_path("/home/tbjurman/dev/git/ext/edbg/_build/default/lib/edbg/ebin").
-code:add_path("/home/tbjurman/dev/git/ext/edbg/_build/default/lib/pp_record/ebin").
+code:add_path("/home/tbjurman/dev/git/ext/edbg/ebin").

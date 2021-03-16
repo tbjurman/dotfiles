@@ -136,18 +136,19 @@
 ;; Redraw display
 (global-set-key (kbd "<f1>") 'redraw-display)
 
+;; TEMPORARY FIX (no rpbcopy.py)
 ;; Copy to remote using rpbcopy
-(defun tb-rpbcopy (text &optional push)
-  (let ((process-connection-type nil))
-    (let ((proc (start-process "rpb-copy" nil "rpb")))
-      (process-send-string proc text)
-      (process-send-eof proc))))
-(setq interprogram-cut-function 'tb-rpbcopy)
+;; (defun tb-rpbcopy (text &optional push)
+;;   (let ((process-connection-type nil))
+;;     (let ((proc (start-process "rpb-copy" nil "rpb")))
+;;       (process-send-string proc text)
+;;       (process-send-eof proc))))
+;; (setq interprogram-cut-function 'tb-rpbcopy)
 
-;; Paste from remote using rpb
-(defun tb-rpbpaste ()
-  (shell-command-to-string "rpb p"))
-(setq interprogram-paste-function 'tb-rpbpaste)
+;; ;; Paste from remote using rpb
+;; (defun tb-rpbpaste ()
+;;   (shell-command-to-string "rpb p"))
+;; (setq interprogram-paste-function 'tb-rpbpaste)
 
 ;; Window move together with tmux
 (defun windmove-emacs-or-tmux(dir tmux-cmd)
