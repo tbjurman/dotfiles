@@ -2,9 +2,7 @@ use std::io::{Read, Write, BufWriter, BufReader};
 use std::net::{SocketAddrV4, Ipv4Addr, TcpListener};
 use std::process::{Command, Stdio, exit};
 
-const PASTE_PATTERN: &'static str = "!@#999$%^";
-
-fn write_to_clipboard(output: &Vec<u8>) -> () {
+fn write_to_clipboard(output: &Vec<u8>) {
     let copy = Command::new("pbcopy")
         .stdin(Stdio::piped())
         .spawn()
@@ -33,10 +31,12 @@ fn setup_listener(port: u16) -> TcpListener {
 }
 
 fn is_paste(buf: &Vec<u8>) -> bool {
-    if buf.len() != PASTE_PATTERN.len() {
+    let paste_pattern = "!@#999$%^";
+
+    if buf.len() != paste_pattern.len() {
         return false;
     }
-    if &buf[0..PASTE_PATTERN.len()] != PASTE_PATTERN.as_bytes() {
+    if buf.as_slice() != paste_pattern.as_bytes() {
         return false;
     }
     true
@@ -64,8 +64,8 @@ pub fn main() {
         println!("Usage: {} port", std::env::args().nth(0).unwrap());
         exit(1);
     }
-    let s_port = std::env::args().nth(1).unwrap();
-    let port = s_port.parse::<u16>().unwrap();
+    let port = std::env::args().nth(1).unwrap();
+    let port = port.parse::<u16>().unwrap();
     let listener = setup_listener(port);
     accept_copy_paste_loop(&listener);
 }
