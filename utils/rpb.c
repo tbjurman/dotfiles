@@ -89,6 +89,7 @@ void remote_pb_to_stdout(int sock)
   char buf[BUF_SIZE];
 
   send_all(sock, PASTE_PATTERN, PASTE_PATTERN_SIZE);
+  shutdown(sock, SHUT_WR);
 
   while ((brd = read(sock, buf, BUF_SIZE)) > 0) {
     bwr_tot = 0;
