@@ -3,7 +3,9 @@ use std::net::{SocketAddrV4, Ipv4Addr, TcpListener};
 use std::process::{Command, Stdio, exit};
 
 fn write_to_clipboard(output: &Vec<u8>) {
-    let copy = Command::new("pbcopy")
+    let copy = Command::new("xclip")
+        .arg("-selection")
+        .arg("clipboard")
         .stdin(Stdio::piped())
         .spawn()
         .unwrap();
@@ -13,7 +15,12 @@ fn write_to_clipboard(output: &Vec<u8>) {
 }
 
 fn read_from_clipboard() -> Vec<u8> {
-    let paste = Command::new("pbpaste")
+    let paste = Command::new("xclip")
+        .arg("-selection")
+        .arg("clipboard")
+        .arg("-o")
+        .arg("2>")
+        .arg("/dev/null")
         .stdout(Stdio::piped())
         .spawn()
         .unwrap();
@@ -45,15 +52,14 @@ fn is_paste(buf: &Vec<u8>) -> bool {
 fn accept_copy_paste_loop(listener: &TcpListener) -> () {
     loop {
         let (mut tcp_stream, _addr) = listener.accept().unwrap();
+        let mut reader = BufReader::new(&mut tcp_stream);
         let mut buf = Vec::new();
-        // read to socket close?
-        tcp_stream.read_to_end(&mut buf).unwrap();
+        reader.read_to_end(&mut buf).unwrap();
         if is_paste(&buf) {
-            // we're pasting
             let cbd = read_from_clipboard();
-            tcp_stream.write_all(&cbd).unwrap();
+            let mut writer = BufWriter::new(&mut tcp_stream);
+            writer.write_all(&cbd).unwrap();
         } else {
-            // we're copying
             write_to_clipboard(&buf);
         }
     }
@@ -65,7 +71,7 @@ pub fn main() {
         exit(1);
     }
     let port = std::env::args().nth(1).unwrap();
-    let port = port.parse::<u16>().unwrap();
+    let port: u16 = port.parse().unwrap();
     let listener = setup_listener(port);
     accept_copy_paste_loop(&listener);
 }
