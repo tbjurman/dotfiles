@@ -36,7 +36,7 @@
  '(nrepl-message-colors
    '("#CC9393" "#DFAF8F" "#F0DFAF" "#7F9F7F" "#BFEBBF" "#93E0E3" "#94BFF3" "#DC8CC3"))
  '(package-selected-packages
-   '(yaml-mode plantuml-mode ## markdown-mode git-gutter smex magit company ivy-hydra erlang creamsody-theme base16-theme ahungry-theme))
+   '(rust-mode yaml-mode plantuml-mode ## markdown-mode git-gutter smex magit company ivy-hydra erlang creamsody-theme base16-theme ahungry-theme))
  '(pdf-view-midnight-colors '("#DCDCCC" . "#383838"))
  '(pos-tip-background-color "#1A3734")
  '(pos-tip-foreground-color "#FFFFC8")
@@ -137,7 +137,7 @@
   (let ((process-connection-type nil))
     (let ((proc (start-process "xclip" nil "xclip" "-selection" "clipboard")))
       (process-send-string proc text)
-      (process-send-eof proc))))  
+      (process-send-eof proc))))
 (setq interprogram-cut-function 'tb-rpbcopy)
 
 ;; Paste from remote using rpb
