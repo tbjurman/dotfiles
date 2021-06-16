@@ -4,7 +4,7 @@
 alias pb='ps -ef | grep beam.smp | grep -v grep'
 alias kb='killall beam.smp'
 alias ver='. ~/bin/version.sh'
-alias vim='nvim'
+#alias vim='nvim'
 
 ##############################################################################
 # environment
