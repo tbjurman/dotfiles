@@ -1,3 +1,6 @@
+;; Add MELPA
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+(add-to-list 'package-archives '("gnu" . "https://elpa.gnu.org/packages/") t)
 
 ;; Added by Package.el.  This must come before configurations of
 ;; installed packages.  Don't delete this line.  If you don't want it,
@@ -5,19 +8,11 @@
 ;; You may delete these explanatory comments.
 (package-initialize)
 
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(case-fold-search nil)
- '(custom-enabled-themes '(solarized-light))
- '(custom-safe-themes
-   '("d91ef4e714f05fff2070da7ca452980999f5361209e679ee988e3c432df24347" default))
- '(git-gutter:diff-option "HEAD")
- '(indent-tabs-mode nil)
- '(package-selected-packages
-   '(sql-indent graphviz-dot-mode solarized-theme realgud-lldb yaml-mode rust-mode markdown-mode git-gutter smex magit company ivy-hydra erlang creamsody-theme base16-theme ahungry-theme)))
+;; Enable use-package
+(eval-when-compile
+  (add-to-list 'load-path "/Users/tbjurman/dev/ext/use-package")
+  (require 'use-package))
+
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -27,17 +22,12 @@
 
 ;; === TB CUSTOMIZATION START ===
 
-;; Add MELPA
-;;(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
-(add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/") t)
+;; Style it
+;; (use-package solarized-theme :ensure t)
+;; (load-theme 'solarized-light t)
 
 ;; Setup load-path to ~/.emacs.d/local
 (add-to-list 'load-path (expand-file-name "local" user-emacs-directory))
-
-;; Enable use-package
-(eval-when-compile
-  (add-to-list 'load-path "/Users/tbjurman/dev/ext/use-package")
-  (require 'use-package))
 
 ;; Make it lean and mean
 (menu-bar-mode 0)
@@ -49,6 +39,9 @@
 
 ;; Turn off TABS
 (setq-default indent-tabs-mode nil)
+
+;; do case sensitive search
+(setq-default case-fold-search nil)
 
 ;; Turn off backup files
 (setq make-backup-files nil)
@@ -166,15 +159,112 @@
   (move-end-of-line nil)
   (delete-char 1)
   (just-one-space))
+
 ;; Bind M-j to tb-join-line-below
 (global-set-key (kbd "M-j") 'tb-join-line-below)
 ;; --- Vim style stuff (end) -----------------------------------------
 
-(use-package init-ido)
-;; (use-package init-ivy)
-;; (use-package init-company)
-(use-package lux-mode)
-(use-package yang-mode)
-(use-package init-magit)
-(use-package init-erlang)
-(use-package realgud-lldb)
+;; ############################################################################
+(use-package rustic
+  :ensure t
+  :bind (:map rustic-mode-map
+              ("M-j" . lsp-ui-imenu)
+              ("M-?" . lsp-find-references)
+              ("C-c C-c l" . flycheck-list-errors)
+              ("C-c C-c a" . lsp-execute-code-action)
+              ("C-c C-c r" . lsp-rename)
+              ("C-c C-c q" . lsp-workspace-restart)
+              ("C-c C-c Q" . lsp-workspace-shutdown)
+              ("C-c C-c s" . lsp-rust-analyzer-status))
+  :config
+  ;; uncomment for less flashiness
+  (setq lsp-eldoc-hook nil)
+  (setq lsp-enable-symbol-highlighting nil)
+  (setq lsp-signature-auto-activate nil)
+
+  ;; comment to disable rustfmt on save
+  (setq rustic-format-on-save t)
+  (add-hook 'rustic-mode-hook 'rk/rustic-mode-hook))
+
+(defun rk/rustic-mode-hook ()
+  ;; so that run C-c C-c C-r works without having to confirm
+  (setq-local buffer-save-without-query t))
+
+;; ############################################################################
+(use-package flycheck :ensure t)
+;; ############################################################################
+(use-package lsp-mode
+  :ensure
+  :commands lsp
+  :custom
+  ;; what to use when checking on-save. "check" is default, I prefer clippy
+  (lsp-rust-analyzer-cargo-watch-command "clippy")
+  (lsp-eldoc-render-all t)
+  (lsp-idle-delay 0.6)
+  (lsp-rust-analyzer-server-display-inlay-hints nil)
+  :config
+  (add-hook 'lsp-mode-hook 'lsp-ui-mode))
+
+;; ############################################################################
+(use-package lsp-ui
+  :ensure
+  :commands lsp-ui-mode
+  :custom
+  (lsp-ui-peek-always-show t)
+  (lsp-ui-sideline-show-hover nil)
+  (lsp-ui-doc-enable nil))
+
+;; ############################################################################
+(use-package sql-indent :ensure t)
+
+;; ############################################################################
+(use-package graphviz-dot-mode :ensure t)
+
+;; ############################################################################
+(use-package realgud-lldb :ensure t)
+
+;; ############################################################################
+(use-package yaml-mode :ensure t)
+
+;; ############################################################################
+(use-package markdown-mode :ensure t)
+
+;; ############################################################################
+(use-package git-gutter
+  :ensure t
+  :config
+  (setq git-gutter:diff-option "HEAD"))
+
+;; ############################################################################
+(use-package smex :ensure t)
+
+;; ############################################################################
+(use-package magit
+  :ensure t
+  :config
+  (global-set-key (kbd "C-x g") 'magit-status))
+
+;; ############################################################################
+(use-package lux-mode :ensure t)
+
+;; ############################################################################
+(use-package yang-mode :ensure t)
+
+;; ############################################################################
+(use-package erlang :ensure t)
+
+;; ############################################################################
+(use-package ido
+  :ensure t
+  :config
+  (setq ido-enable-flex-matching t)
+  (setq ido-everywhere t)
+  (setq confirm-nonexistent-file-or-buffer nil)
+  (setq ido-create-new-buffer 'always)
+  (ido-mode 1))
+
+;; ############################################################################
+(use-package company
+  :ensure t
+  :config
+  (add-hook 'after-init-hook 'global-company-mode))
