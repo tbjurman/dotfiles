@@ -1,71 +1,24 @@
-
 ;; Added by Package.el.  This must come before configurations of
 ;; installed packages.  Don't delete this line.  If you don't want it,
 ;; just comment it out by adding a semicolon to the start of the line.
 ;; You may delete these explanatory comments.
 (package-initialize)
 
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(ansi-color-faces-vector
-   [default default default italic underline success warning error])
- '(ansi-color-names-vector
-   ["#f5f5f5" "#ac4142" "#90a959" "#f4bf75" "#6a9fb5" "#aa759f" "#6a9fb5" "#303030"])
- '(ansi-term-color-vector
-   [unspecified "#181818" "#ab4642" "#a1b56c" "#f7ca88" "#7cafc2" "#ba8baf" "#7cafc2" "#d8d8d8"])
- '(case-fold-search nil)
- '(company-quickhelp-color-background "#4F4F4F")
- '(company-quickhelp-color-foreground "#DCDCCC")
- '(custom-safe-themes
-   (quote
-    ("d91ef4e714f05fff2070da7ca452980999f5361209e679ee988e3c432df24347" "2a998a3b66a0a6068bcb8b53cd3b519d230dd1527b07232e54c8b9d84061d48d" "146061a7ceea4ccc75d975a3bb41432382f656c50b9989c7dc1a7bb6952f6eb4" "e4486d0ad184fb7511e391b6ecb8c4d7e5ab29e2d33bc65403e2315dbacaa4aa" default)))
- '(fci-rule-color "#383838")
- '(git-gutter:diff-option "HEAD")
- '(ibuffer-formats
-   (quote
-    ((mark modified read-only locked " "
-           (name 35 35 :left :elide)
-           " "
-           (mode 16 16 :left :elide)
-           " " filename-and-process)
-     (mark " "
-           (name 16 -1)
-           " " filename))))
- '(indent-tabs-mode nil)
- '(nrepl-message-colors
-   (quote
-    ("#CC9393" "#DFAF8F" "#F0DFAF" "#7F9F7F" "#BFEBBF" "#93E0E3" "#94BFF3" "#DC8CC3")))
- '(package-selected-packages
-   (quote
-    (rust-mode solarized-theme plantuml-mode ## markdown-mode git-gutter smex magit company ivy-hydra erlang creamsody-theme base16-theme ahungry-theme)))
- '(pdf-view-midnight-colors (quote ("#DCDCCC" . "#383838")))
- '(pos-tip-background-color "#1A3734")
- '(pos-tip-foreground-color "#FFFFC8")
- '(red "#ffffff")
- '(send-mail-function (quote smtpmail-send-it)))
-
-;; === TB CUSTOMIZATION START ===
-
 ;; Add MELPA
-;;(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
-(add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/") t)
-
-;; Setup load-path to ~/.emacs.d/local
-(add-to-list 'load-path (expand-file-name "local" user-emacs-directory))
-(add-to-list 'custom-theme-load-path (expand-file-name "themes" custom-theme-directory))
-
-;; Dark theme
-;;(setq zenburn-override-colors-alist '(("zenburn-bg"  . "#2a2a2a")))
-;;(load-theme 'zenburn t)
-
-;; Solarized light
-(load-theme 'solarized-light t)
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+(add-to-list 'package-archives '("gnu" . "https://elpa.gnu.org/packages/") t)
 
 ;; Enable use-package
 (eval-when-compile (require 'use-package))
+
+;; === TB CUSTOMIZATION START ===
+
+;; Style it
+;; (use-package solarized-theme :ensure t)
+;; (load-theme 'solarized-light t)
+
+;; Setup load-path to ~/.emacs.d/local
+(add-to-list 'load-path (expand-file-name "local" user-emacs-directory))
 
 ;; Make it lean and mean
 (menu-bar-mode 0)
@@ -77,6 +30,9 @@
 
 ;; Turn off TABS
 (setq-default indent-tabs-mode nil)
+
+;; do case sensitive search
+(setq-default case-fold-search nil)
 
 ;; Turn off backup files
 (setq make-backup-files nil)
@@ -107,13 +63,6 @@
   (show-paren-mode))
 (add-hook 'prog-mode-hook 'tb-prog-mode-hook)
 
-;; Bind key to org-capture
-;; (global-set-key (kbd "C-c n") (lambda () (interactive) (org-capture nil "n")))
-;; A nice template for capturing notes
-;; (setq org-capture-templates
-;;       '(("n" "Note" entry (file+headline "~/Documents/notes.org" "Notes")
-;;          "* NOTE %?\n  %i\n  %a")))
-
 ;; Revert buffer
 (defun tb-revert-buffer ()
   (interactive)
@@ -135,6 +84,13 @@
 
 ;; Redraw display
 (global-set-key (kbd "<f1>") 'redraw-display)
+
+;; Horizontal line
+(setq global-hl-line-sticky-mode t)
+(global-hl-line-mode t)
+
+;; Default 4 spaces indentation
+(setq-default c-basic-offset 4)
 
 ;; Copy to remote using rpbcopy
 (defun tb-rpbcopy (text &optional push)
@@ -176,58 +132,139 @@
 
 
 ;; --- Vim style stuff (begin) ---------------------------------------
-;; Open new line below like Vim(tm) does
-;; (defun tb-open-line-below ()
-;;   "Open a new line below the current point and indent."
-;;   (interactive)
-;;   (let ((oldpos (point)))
-;;     (end-of-line)
-;;     (newline-and-indent)))
-
-;; ;; Open new line above like Vim(tm) does
-;; (defun tb-open-line-above ()
-;;   "Open a new line above the current line and indent."
-;;   (interactive)
-;;   (let ((oldpos (point)))
-;;     (previous-line)
-;;     (end-of-line)
-;;     (newline-and-indent)))
-
-;; Join line below point with current line
 (defun tb-join-line-below ()
   "Joins the line below point with the current line."
   (interactive)
   (move-end-of-line nil)
   (delete-char 1)
   (just-one-space))
+
 ;; Bind M-j to tb-join-line-below
 (global-set-key (kbd "M-j") 'tb-join-line-below)
 ;; --- Vim style stuff (end) -----------------------------------------
 
-(setq-default c-basic-offset 4)
 
-(require 'yang-mode)
+;; ############################################################################
+(use-package flycheck :ensure t)
+;; ############################################################################
+(use-package lsp-mode
+  :ensure
+  :commands lsp
+  :custom
+  ;; what to use when checking on-save. "check" is default, I prefer clippy
+  (lsp-rust-analyzer-cargo-watch-command "clippy")
+  (lsp-eldoc-render-all t)
+  (lsp-idle-delay 0.6)
+  (lsp-rust-analyzer-server-display-inlay-hints nil)
+  :config
+  (add-hook 'lsp-mode-hook 'lsp-ui-mode))
+
+;; ############################################################################
+(use-package lsp-ui
+  :ensure
+  :commands lsp-ui-mode
+  :custom
+  (lsp-ui-peek-always-show t)
+  (lsp-ui-sideline-show-hover nil)
+  (lsp-ui-doc-enable nil))
+
+;; ############################################################################
+(use-package rustic
+  :ensure t
+  :bind (:map rustic-mode-map
+              ("M-j" . lsp-ui-imenu)
+              ("M-?" . lsp-find-references)
+              ("C-c C-c l" . flycheck-list-errors)
+              ("C-c C-c a" . lsp-execute-code-action)
+              ("C-c C-c r" . lsp-rename)
+              ("C-c C-c q" . lsp-workspace-restart)
+              ("C-c C-c Q" . lsp-workspace-shutdown)
+              ("C-c C-c s" . lsp-rust-analyzer-status))
+  :config
+  ;; uncomment for less flashiness
+  (setq lsp-eldoc-hook nil)
+  (setq lsp-enable-symbol-highlighting nil)
+  (setq lsp-signature-auto-activate nil)
+
+  ;; comment to disable rustfmt on save
+  (setq rustic-format-on-save t)
+  (add-hook 'rustic-mode-hook 'rk/rustic-mode-hook))
+
+(defun rk/rustic-mode-hook ()
+  ;; so that run C-c C-c C-r works without having to confirm
+  (setq-local buffer-save-without-query t))
+
+;; ############################################################################
+(use-package sql-indent :ensure t)
+
+;; ############################################################################
+(use-package graphviz-dot-mode :ensure t)
+
+;; ############################################################################
+(use-package realgud-lldb :ensure t)
+
+;; ############################################################################
+(use-package yaml-mode :ensure t)
+
+;; ############################################################################
+(use-package markdown-mode :ensure t)
+
+;; ############################################################################
+(use-package git-gutter
+  :ensure t
+  :config
+  (setq git-gutter:diff-option "HEAD"))
+
+;; ############################################################################
+(use-package smex
+  :ensure t
+  :bind (("M-x" . smex))
+  :config (smex-initialize))
+
+;; ############################################################################
+(use-package magit
+  :ensure t
+  :config
+  (global-set-key (kbd "C-x g") 'magit-status))
+
+;; ############################################################################
+(use-package lux-mode :ensure t)
+
+;; ############################################################################
+(use-package yang-mode :ensure t)
+
 (defun my-yang-mode-hook ()
   "Configuration for YANG Mode. Add this to `yang-mode-hook'."
   (progn
     (setq c-basic-offset 2)))
 (add-hook 'yang-mode-hook 'my-yang-mode-hook)
 
+;; ############################################################################
+(use-package erlang :ensure t)
 
-(use-package init-ido)
-;; (use-package init-ivy)
-;; (use-package init-company)
-(use-package lux-mode)
-(use-package cc-mode
-  :config (setq c-basic-offset 4))
-(use-package init-magit)
-(use-package init-erlang)
-(use-package smex
+;; ############################################################################
+(use-package ido
   :ensure t
-  :bind (("M-x" . smex))
-  :config (smex-initialize))
+  :config
+  (setq ido-enable-flex-matching t)
+  (setq ido-everywhere t)
+  (setq confirm-nonexistent-file-or-buffer nil)
+  (setq ido-create-new-buffer 'always)
+  (ido-mode 1))
 
-;; Color and font configuration - dark theme
+;; ############################################################################
+(use-package company
+  :ensure t
+  :config
+  (add-hook 'after-init-hook 'global-company-mode))
+
+;; ############################################################################
+(use-package cc-mode
+  :config
+  (setq c-basic-offset 4))
+
+;; ############################################################################
+;; Styling
  (use-package whitespace
    :config
    (set-face-attribute 'whitespace-tab nil :foreground "#fcfcfc")
@@ -249,15 +286,6 @@
   :config
   (set-face-attribute 'diff-added nil :foreground "#000000" :background "#99cc99")
   (set-face-attribute 'diff-removed nil :foreground "#000000" :background "#d07c7c"))
-
-(setq global-hl-line-sticky-mode t)
-(global-hl-line-mode t)
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
 
 ;; -----------------------------------------------------------------------------
 ;; -----------------------------------------------------------------------------
@@ -318,3 +346,24 @@
 (add-hook 'vc-annotate-mode-hook
   (lambda ()
    (local-set-key (kbd "b") 'vc-annotate-previous-annotation)))
+
+;; Configure
+
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(font-lock-comment-face ((t (:foreground "color-246" :slant italic))))
+ '(line-number ((t (:inherit (shadow default) :foreground "grey"))))
+ '(line-number-current-line ((t (:inherit line-number :foreground "black")))))
+
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (yang-mode yaml-mode use-package sql-indent solarized-theme smex rustic rust-mode realgud-lldb plantuml-mode magit lux-mode lsp-ui ivy graphviz-dot-mode git-gutter flycheck erlang creamsody-theme company base16-theme ahungry-theme))))
