@@ -1,66 +1,35 @@
-"
-" Setup NeoBundle - BEGIN
-"
-if has('vim_starting')
-  if &compatible
-    set nocompatible               " Be iMproved
-  endif
-
-  " Required:
-  set runtimepath+=/Users/tbjurman/.nvim/bundle/neobundle.vim/
-endif
-
 " Required:
-call neobundle#begin(expand('/Users/tbjurman/.nvim/bundle'))
-
-" Let NeoBundle manage NeoBundle
-" Required:
-NeoBundleFetch 'Shougo/neobundle.vim'
+call plug#begin('~/.config/nvim/plugged')
 
 " Add or remove your Bundles here:
-" NeoBundle 'Shougo/neosnippet.vim'
-" NeoBundle 'Shougo/neosnippet-snippets'
-NeoBundle 'tpope/vim-fugitive'
-NeoBundle 'dhruvasagar/vim-table-mode'
-NeoBundle 'terryma/vim-multiple-cursors'
-NeoBundle 'flazz/vim-colorschemes'
-NeoBundle 'TaskList.vim'
-NeoBundle 'klen/python-mode'
-NeoBundle 'shougo/vimproc.vim'
-NeoBundle 'christoomey/vim-tmux-navigator'
-NeoBundle 'tomtom/tcomment_vim'
-NeoBundle 'tpope/vim-vinegar'
-NeoBundle 'kien/ctrlp.vim'
-NeoBundle 'bling/vim-airline'
-NeoBundle 'vim-airline/vim-airline-themes'
-NeoBundle 'airblade/vim-gitgutter'
-NeoBundle 'jceb/vim-orgmode'
-NeoBundle 'tpope/vim-speeddating'
-NeoBundle 'tbjurman/vim-yang'
-NeoBundle 'tbjurman/vim-lux'
-NeoBundle 'jlanzarotta/bufexplorer'
-NeoBundle 'grep.vim'
-NeoBundle 'neomake/neomake'
-" NeoBundle 'tpope/vim-dispatch'
-" NeoBundle 'radenling/vim-dispatch-neovim'
-" NeoBundle 'shougo/deoplete.nvim'
-
-" You can specify revision/branch/tag.
-" NeoBundle 'Shougo/vimshell', { 'rev' : '3787e5' }
+" Plug 'Shougo/neosnippet.vim'
+" Plug 'Shougo/neosnippet-snippets'
+Plug 'tpope/vim-fugitive'
+Plug 'dhruvasagar/vim-table-mode'
+Plug 'terryma/vim-multiple-cursors'
+Plug 'flazz/vim-colorschemes'
+Plug 'klen/python-mode'
+Plug 'shougo/vimproc.vim'
+Plug 'christoomey/vim-tmux-navigator'
+Plug 'tomtom/tcomment_vim'
+Plug 'tpope/vim-vinegar'
+Plug 'kien/ctrlp.vim'
+Plug 'bling/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'airblade/vim-gitgutter'
+Plug 'jceb/vim-orgmode'
+Plug 'tpope/vim-speeddating'
+Plug 'tbjurman/vim-yang'
+Plug 'tbjurman/vim-lux'
+Plug 'jlanzarotta/bufexplorer'
+Plug 'neomake/neomake'
+Plug 'vim-erlang/vim-erlang-runtime'
 
 " Required:
-call neobundle#end()
+call plug#end()
 
 " Required:
 filetype plugin indent on
-
-" If there are uninstalled bundles found on startup,
-" this will conveniently prompt you to install them.
-NeoBundleCheck
-"
-" Setup NeoBundle - END
-"
-" style
 
 set exrc
 set secure
@@ -184,10 +153,6 @@ nnoremap Q <nop>
 " search and replace word under cursor
 nnoremap <Leader>s :%s/\<<C-r><C-w>\>//g<Left><Left>
 
-" Grep (needs grep.vim) for word under cursor in all files in current dir
-nnoremap <Leader>g :execute 'Grep -w '.expand('<cword>').' *' \| copen<Left><Left><Left><Left><Left><Left><Left><Left><Left>
-" nnoremap <Leader>g :execute 'Grep /\<'.expand('<cword>').'\>/gj *' \| copen<Left><Left><Left><Left><Left><Left><Left><Left><Left>
-
 " function to remove trailing whitespace
 function! RemoveTrailingWhiteSpace()
   %s/\s\+$//e
@@ -235,10 +200,6 @@ let g:multi_cursor_next_key='<C-i>'
 let g:multi_cursor_prev_key='<C-o>'
 let g:multi_cursor_skip_key='<C-x>'
 let g:multi_cursor_quit_key='<Esc>'
-
-" Tasklist
-let g:tlTokenList = ['FIXME', 'TODO', 'XXX', '%!']
-let g:tlWindowPosition = 1
 
 let g:ctrlp_map = '<S-F>'
 let g:ctrlp_working_path_mode = ''
