@@ -9,10 +9,13 @@ alias ver='. ~/bin/version.sh'
 ##############################################################################
 # environment
 ##############################################################################
-set -xg MANPATH /usr/share/man $MANPATH
 set -xg WEBUI_SKIP true
 # this means don't build OTP in fish
 set -xg TYPE debug
+# edbg coloring
+set -xg EDBG_COLOR "att=blue warn=magenta"
+# fix ls dir color for dark bg (default is "exfxcxdxbxegedabagacad")
+set -xg LSCOLORS "gxfxcxdxbxegedabagacad"
 
 ##############################################################################
 # fish git prompt
