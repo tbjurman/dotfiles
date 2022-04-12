@@ -121,29 +121,49 @@
 (setq interprogram-paste-function 'tb-pbpaste)
 
 ;; Window move together with tmux
-(defun windmove-emacs-or-tmux(dir tmux-cmd)
-  (interactive)
-  (if (ignore-errors (funcall (intern (concat "windmove-" dir))))
-      nil ;; Moving within emacs
-    (shell-command tmux-cmd)) ;; At edges, send command to tmux
-  )
+(if (not (display-graphic-p))
+    (progn
+      (defun windmove-emacs-or-tmux(dir tmux-cmd)
+        (interactive)
+        (if (ignore-errors (funcall (intern (concat "windmove-" dir))))
+            nil ;; Moving within emacs
+          (shell-command tmux-cmd)) ;; At edges, send command to tmux
+        )
 
-(global-set-key (kbd "M-P")
-                '(lambda ()
-                   (interactive)
-                   (windmove-emacs-or-tmux "up" "tmux select-pane -U")))
-(global-set-key (kbd "M-N")
-                '(lambda ()
-                   (interactive)
-                   (windmove-emacs-or-tmux "down" "tmux select-pane -D")))
-(global-set-key (kbd "M-F")
-                '(lambda ()
-                   (interactive)
-                   (windmove-emacs-or-tmux "right" "tmux select-pane -R")))
-(global-set-key (kbd "M-B")
-                '(lambda ()
-                   (interactive)
-                   (windmove-emacs-or-tmux "left"  "tmux select-pane -L")))
+      (global-set-key (kbd "M-P")
+                      '(lambda ()
+                         (interactive)
+                         (windmove-emacs-or-tmux "up" "tmux select-pane -U")))
+      (global-set-key (kbd "M-N")
+                      '(lambda ()
+                         (interactive)
+                         (windmove-emacs-or-tmux "down" "tmux select-pane -D")))
+      (global-set-key (kbd "M-F")
+                      '(lambda ()
+                         (interactive)
+                         (windmove-emacs-or-tmux "right" "tmux select-pane -R")))
+      (global-set-key (kbd "M-B")
+                      '(lambda ()
+                         (interactive)
+                         (windmove-emacs-or-tmux "left"  "tmux select-pane -L"))))
+  (progn
+    (global-set-key (kbd "C-s-p")
+                    '(lambda ()
+                       (interactive)
+                       (windmove-up)))
+    (global-set-key (kbd "C-s-n")
+                    '(lambda ()
+                       (interactive)
+                       (windmove-down)))
+    (global-set-key (kbd "C-s-f")
+                    '(lambda ()
+                       (interactive)
+                       (windmove-right)))
+    (global-set-key (kbd "C-s-b")
+                    '(lambda ()
+                       (interactive)
+                       (windmove-left)))))
+
 
 
 ;; --- Vim style stuff (begin) ---------------------------------------
