@@ -21,3 +21,7 @@
 	prompt = false
 [status]
         showUntrackedFiles = no
+[pull]
+	ff = only
+[init]
+	defaultBranch = main
