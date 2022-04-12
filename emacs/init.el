@@ -8,23 +8,26 @@
 ;; You may delete these explanatory comments.
 (package-initialize)
 
-;; Enable use-package
-(eval-when-compile
-  (add-to-list 'load-path "/Users/tbjurman/dev/ext/use-package")
-  (require 'use-package))
+;; Move customization variables to a separate file and load it
+(setq custom-file (locate-user-emacs-file "custom-vars.el"))
+(load custom-file 'noerror 'nomessage)
 
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(font-lock-comment-face ((t (:foreground "color-246" :slant italic)))))
+;; Enable use-package
+;; (eval-when-compile
+;;  (add-to-list 'load-path "/Users/tbjurman/dev/ext/use-package")
+(require 'use-package)
 
 ;; === TB CUSTOMIZATION START ===
 
 ;; Style it
-;; (use-package solarized-theme :ensure t)
-;; (load-theme 'solarized-light t)
+;;(use-package solarized-theme :ensure t)
+;;(load-theme 'solarized-selenized-light t)
+;;(use-package github-theme :ensure t)
+;;(load-theme 'github t)
+;; (use-package dracula-theme :ensure t)
+;; (load-theme 'dracula t)
+(use-package zenburn-theme :ensure t)
+(load-theme 'zenburn t)
 
 ;; Setup load-path to ~/.emacs.d/local
 (add-to-list 'load-path (expand-file-name "local" user-emacs-directory))
@@ -55,8 +58,11 @@
 ;; Line numbers
 (global-display-line-numbers-mode t)
 
-;; Column number in status bar
+;; Colmn number in status bar
 (column-number-mode)
+
+;; Default 4 spaces indentation
+(setq-default c-basic-offset 4)
 
 ;; Git-gutter
 (global-git-gutter-mode 1)
@@ -69,7 +75,9 @@
   (setq whitespace-style '(face trailing tabs lines-tail empty))
   (whitespace-mode)
   (which-function-mode)
-  (show-paren-mode))
+  (show-paren-mode)
+  (setq fill-column 80)
+  (display-fill-column-indicator-mode))
 (add-hook 'prog-mode-hook 'tb-prog-mode-hook)
 
 ;; Revert buffer
@@ -165,54 +173,67 @@
 ;; --- Vim style stuff (end) -----------------------------------------
 
 ;; ############################################################################
-(use-package rustic
-  :ensure t
-  :bind (:map rustic-mode-map
-              ("M-j" . lsp-ui-imenu)
-              ("M-?" . lsp-find-references)
-              ("C-c C-c l" . flycheck-list-errors)
-              ("C-c C-c a" . lsp-execute-code-action)
-              ("C-c C-c r" . lsp-rename)
-              ("C-c C-c q" . lsp-workspace-restart)
-              ("C-c C-c Q" . lsp-workspace-shutdown)
-              ("C-c C-c s" . lsp-rust-analyzer-status))
-  :config
-  ;; uncomment for less flashiness
-  (setq lsp-eldoc-hook nil)
-  (setq lsp-enable-symbol-highlighting nil)
-  (setq lsp-signature-auto-activate nil)
-
-  ;; comment to disable rustfmt on save
-  (setq rustic-format-on-save t)
-  (add-hook 'rustic-mode-hook 'rk/rustic-mode-hook))
-
-(defun rk/rustic-mode-hook ()
-  ;; so that run C-c C-c C-r works without having to confirm
-  (setq-local buffer-save-without-query t))
+(use-package rust-mode
+  :ensure t)
 
 ;; ############################################################################
-(use-package flycheck :ensure t)
-;; ############################################################################
-(use-package lsp-mode
-  :ensure
-  :commands lsp
-  :custom
-  ;; what to use when checking on-save. "check" is default, I prefer clippy
-  (lsp-rust-analyzer-cargo-watch-command "clippy")
-  (lsp-eldoc-render-all t)
-  (lsp-idle-delay 0.6)
-  (lsp-rust-analyzer-server-display-inlay-hints nil)
-  :config
-  (add-hook 'lsp-mode-hook 'lsp-ui-mode))
+;; (use-package rustic
+;;   :ensure t
+;;   :bind (:map rustic-mode-map
+;;               ("C-c C-c j" . lsp-ui-imenu)
+;;               ("C-c C-c ?" . lsp-find-references)
+;;               ("C-c C-c l" . flycheck-list-errors)
+;;               ("C-c C-c a" . lsp-execute-code-action)
+;;               ("C-c C-c r" . lsp-rename)
+;;               ("C-c C-c q" . lsp-workspace-restart)
+;;               ("C-c C-c Q" . lsp-workspace-shutdown)
+;;               ("C-c C-c s" . lsp-rust-analyzer-status))
+;;   :config
+;;   ;; uncomment for less flashiness
+;;   ;; (setq lsp-eldoc-hook nil)
+;;   ;; (setq lsp-enable-symbol-highlighting nil)
+;;   ;; (setq lsp-signature-auto-activate nil)
+
+;;   ;; comment to disable rustfmt on save
+;;   (setq rustic-format-on-save t)
+;;   (add-hook 'rustic-mode-hook 'rk/rustic-mode-hook))
+
+;; (defun rk/r>84;0;0custic-mode-hook ()
+;;   ;; so that run C-c C-c C-r works without having to confirm
+;;   (setq-local buffer-save-without-query t))
 
 ;; ############################################################################
-(use-package lsp-ui
-  :ensure
-  :commands lsp-ui-mode
-  :custom
-  (lsp-ui-peek-always-show t)
-  (lsp-ui-sideline-show-hover nil)
-  (lsp-ui-doc-enable nil))
+;; (use-package flycheck :ensure t)
+;; ############################################################################
+;; (use-package lsp-mode
+;;   :ensure
+;;   :commands lsp
+;;   :custom
+;;   ;; what to use when checking on-save. "check" is default, I prefer clippy
+;;   (lsp-rust-analyzer-cargo-watch-command "clippy")
+;;   (lsp-eldoc-render-all t)
+;;   (lsp-idle-delay 0.5)
+;;   (lsp-rust-analyzer-server-display-inlay-hints nil))
+
+  ;; :hook ((rustic-mode . lsp)
+  ;;        (lsp-mode . lsp-enable-which-key-integration)))
+  ;; :config
+  ;; (add-hook 'lsp-mode-hook 'lsp-ui-mode))
+
+;; ############################################################################
+;; (use-package lsp-ui
+;;   :ensure
+;;   :commands lsp-ui-mode
+;;   :custom
+;;   (lsp-ui-peek-always-show t)
+;;   (lsp-ui-sideline-show-hover nil)
+;;   (lsp-ui-doc-enable t))
+
+;; ############################################################################
+;; (use-package rust-mode :ensure t)
+
+;; ############################################################################
+(use-package evil :ensure t)
 
 ;; ############################################################################
 (use-package sql-indent :ensure t)
@@ -228,6 +249,26 @@
 
 ;; ############################################################################
 (use-package markdown-mode :ensure t)
+
+(use-package diff-mode
+  :ensure t
+  :config
+  ;; (set-face-attribute
+  ;;  'diff-header nil :background "gray55")
+  ;; (set-face-attribute
+  ;;  'diff-added nil :background "green")
+  ;; (set-face-attribute
+  ;;  'diff-removed nil :background "red" :foreground "black")
+  ;; (set-face-attribute
+  ;;  'diff-changed nil :foreground "purple"))
+  ;; (set-face-attribute 'diff-refine-header nil
+  ;;                     :background "gray55")
+  (set-face-attribute 'diff-refine-added nil
+                      :foreground "white" :background "darkgreen")
+  (set-face-attribute 'diff-refine-removed nil
+                      :foreground "white" :background "darkred")
+  (set-face-attribute 'diff-refine-changed nil
+                      :foreground "white" :background "darkblue"))
 
 ;; ############################################################################
 (use-package git-gutter
@@ -268,10 +309,10 @@
   :ensure t
   :config
   (add-hook 'after-init-hook 'global-company-mode))
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   '(yang-mode yaml-mode sql-indent solarized-theme smex rustic realgud-lldb magit lux-mode lsp-ui ivy-hydra graphviz-dot-mode git-gutter flycheck erlang creamsody-theme company base16-theme ahungry-theme)))
+
+;; ############################################################################
+(use-package doom-modeline
+  :ensure t
+  :hook (after-init . doom-modeline-mode)
+  :config
+  (setq doom-modeline-vcs-max-length 32))
