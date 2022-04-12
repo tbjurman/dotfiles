@@ -33,7 +33,11 @@
 (add-to-list 'load-path (expand-file-name "local" user-emacs-directory))
 
 ;; Make it lean and mean
-(menu-bar-mode 0)
+(menu-bar-mode -1)
+(if (display-graphic-p)
+    (progn (toggle-scroll-bar -1)
+           (tool-bar-mode -1)))
+
 (setq inhibit-startup-screen 1)
 (defalias 'yes-or-no-p 'y-or-n-p)
 
