@@ -53,8 +53,23 @@
 ;; Turn off backup files
 (setq make-backup-files nil)
 
-;; Be quiet
-(setq ring-bell-function 'ignore)
+;; Be quiet - flash the mode-line instead
+(defun tb-mode-line-visual-bell--flash ()
+  (let ((frame (selected-frame)))
+    (run-with-timer
+     0.1 nil
+     (lambda (frame)
+       (let ((inhibit-quit)
+             (inhibit-redisplay t))
+         (invert-face 'mode-line frame)
+         (invert-face 'mode-line-inactive frame)))
+     frame)
+    (let ((inhibit-quit)
+          (inhibit-redisplay t))
+      (invert-face 'mode-line frame)
+      (invert-face 'mode-line-inactive frame))))
+
+(setq ring-bell-function 'tb-mode-line-visual-bell--flash)
 
 ;; Remeber file positions
 (save-place-mode 1)
