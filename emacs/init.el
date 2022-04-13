@@ -53,6 +53,9 @@
 ;; Turn off backup files
 (setq make-backup-files nil)
 
+;; Be quiet
+(setq ring-bell-function 'ignore)
+
 ;; Remeber file positions
 (save-place-mode 1)
 
