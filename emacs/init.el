@@ -340,3 +340,10 @@
   :hook (after-init . doom-modeline-mode)
   :config
   (setq doom-modeline-vcs-max-length 32))
+
+;; ############################################################################
+(use-package org-superstar
+  :ensure t
+  :config
+  (org-superstar-configure-like-org-bullets)
+  (add-hook 'org-mode-hook (lambda () (org-superstar-mode 1))))
