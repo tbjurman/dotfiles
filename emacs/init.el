@@ -182,8 +182,6 @@
                       (interactive)
                       (windmove-left)))))
 
-
-
 ;; --- Vim style stuff (begin) ---------------------------------------
 ;; Open new line below like Vim(tm) does
 ;; (defun tb-open-line-below ()
@@ -206,7 +204,7 @@
 (defun tb-join-line-below ()
   "Joins the line below point with the current line."
   (interactive)
-  (move-end-of-line nil)
+  (end-of-line)
   (delete-char 1)
   (just-one-space))
 
