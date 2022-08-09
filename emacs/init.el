@@ -26,14 +26,40 @@
 ;;(load-theme 'github t)
 ;; (use-package dracula-theme :ensure t)
 ;; (load-theme 'dracula t)
-(use-package zenburn-theme :ensure t)
-(load-theme 'zenburn t)
+;; (use-package zenburn-theme :ensure t)
+;; (load-theme 'zenburn t)
+;; (use-package solarized-theme :ensure t)
+;; (load-theme 'solarized-light t)
+
+;; (use-package github-theme
+;;   :ensure t
+;;   :config
+;;   (load-theme 'github t))
+
+(use-package modus-themes
+  :ensure
+  :init
+  ;; Add all your customizations prior to loading the themes
+  (setq modus-themes-italic-constructs nil
+        modus-themes-bold-constructs nil
+        modus-themes-region '(bg-only)
+        modus-themes-diffs 'desaturated
+        )
+
+  ;; Load the theme files before enabling a theme
+  (modus-themes-load-themes)
+  :config
+  ;; Load the theme of your choice:
+  (modus-themes-load-operandi) ;; OR (modus-themes-load-vivendi)
+  :bind ("C-c t" . modus-themes-toggle))
+
 
 ;; Setup load-path to ~/.emacs.d/local
 (add-to-list 'load-path (expand-file-name "local" user-emacs-directory))
 
 ;; Make it lean and mean
 (menu-bar-mode -1)
+
 (if (display-graphic-p)
     (progn (toggle-scroll-bar -1)
            (tool-bar-mode -1)))
