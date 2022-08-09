@@ -332,26 +332,6 @@ apps are not started from a shell."
 ;; ############################################################################
 (use-package markdown-mode :ensure t)
 
-(use-package diff-mode
-  :ensure t
-  :config
-  ;; (set-face-attribute
-  ;;  'diff-header nil :background "gray55")
-  ;; (set-face-attribute
-  ;;  'diff-added nil :background "green")
-  ;; (set-face-attribute
-  ;;  'diff-removed nil :background "red" :foreground "black")
-  ;; (set-face-attribute
-  ;;  'diff-changed nil :foreground "purple"))
-  ;; (set-face-attribute 'diff-refine-header nil
-  ;;                     :background "gray55")
-  (set-face-attribute 'diff-refine-added nil
-                      :foreground "white" :background "darkgreen")
-  (set-face-attribute 'diff-refine-removed nil
-                      :foreground "white" :background "darkred")
-  (set-face-attribute 'diff-refine-changed nil
-                      :foreground "white" :background "darkblue"))
-
 ;; ############################################################################
 (use-package git-gutter
   :ensure t
