@@ -405,11 +405,11 @@ apps are not started from a shell."
   (add-hook 'after-init-hook 'global-company-mode))
 
 ;; ############################################################################
-(use-package doom-modeline
-  :ensure t
-  :hook (after-init . doom-modeline-mode)
-  :config
-  (setq doom-modeline-vcs-max-length 32))
+;; (use-package doom-modeline
+;;   :ensure t
+;;   :hook (after-init . doom-modeline-mode)
+;;   :config
+;;   (setq doom-modeline-vcs-max-length 32))
 
 ;; ############################################################################
 (use-package org-superstar
