@@ -64,6 +64,25 @@
     (progn (toggle-scroll-bar -1)
            (tool-bar-mode -1)))
 
+;; Setup exec-path
+(if (display-graphic-p)
+    (progn
+      (defun set-exec-path-from-shell-PATH ()
+        "Set up Emacs' `exec-path' and PATH environment variable to match
+that used by the user's shell.
+
+This is particularly useful under Mac OS X and macOS, where GUI
+apps are not started from a shell."
+      (interactive)
+      (let ((path-from-shell (replace-regexp-in-string
+                              "[ \t\n]*$" "" (shell-command-to-string
+                                              "$SHELL --login -c 'echo $PATH'"
+                                              ))))
+        (message path-from-shell)
+        (setenv "PATH" path-from-shell)
+        (setq exec-path (split-string path-from-shell path-separator))))
+      (set-exec-path-from-shell-PATH)))
+
 (setq inhibit-startup-screen 1)
 (defalias 'yes-or-no-p 'y-or-n-p)
 
