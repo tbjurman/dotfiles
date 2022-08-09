@@ -380,6 +380,15 @@ apps are not started from a shell."
 (use-package tailf)
 
 ;; ############################################################################
+(use-package erl-find-source
+  :init
+  :hook erlang-mode-hook
+  :bind (:map erlang-mode-map
+         ("M-." . erlfs-find-source-under-point)
+         ("M-," . erlfs-find-source-unwind)
+         ("M-?" . erlfs-find-callers)))
+
+;; ############################################################################
 (use-package ido
   :ensure t
   :config
