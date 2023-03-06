@@ -20,24 +20,8 @@
 ;; === TB CUSTOMIZATION START ===
 
 ;; Style it
-;;(use-package solarized-theme :ensure t)
-;;(load-theme 'solarized-selenized-light t)
-;;(use-package github-theme :ensure t)
-;;(load-theme 'github t)
-;; (use-package dracula-theme :ensure t)
-;; (load-theme 'dracula t)
-;; (use-package zenburn-theme :ensure t)
-;; (load-theme 'zenburn t)
-;; (use-package solarized-theme :ensure t)
-;; (load-theme 'solarized-light t)
-
-;; (use-package github-theme
-;;   :ensure t
-;;   :config
-;;   (load-theme 'github t))
-
 (use-package modus-themes
-  :ensure
+  :ensure t
   :init
   ;; Add all your customizations prior to loading the themes
   (setq modus-themes-italic-constructs nil
@@ -45,13 +29,11 @@
         modus-themes-region '(bg-only)
         modus-themes-diffs 'desaturated
         )
-
-  ;; Load the theme files before enabling a theme
-  (modus-themes-load-themes)
   :config
   ;; Load the theme of your choice:
-  (modus-themes-load-operandi) ;; OR (modus-themes-load-vivendi)
   :bind ("C-c t" . modus-themes-toggle))
+
+(load-theme 'modus-operandi :no-confirm)
 
 
 ;; Setup load-path to ~/.emacs.d/local
@@ -83,7 +65,7 @@ apps are not started from a shell."
         (setq exec-path (split-string path-from-shell path-separator))))
       (set-exec-path-from-shell-PATH)))
 
-(setq inhibit-startup-screen 1)
+(setq inhibit-startup-screen t)
 (defalias 'yes-or-no-p 'y-or-n-p)
 
 ;; Prefer UTF-8
@@ -97,6 +79,9 @@ apps are not started from a shell."
 
 ;; Turn off backup files
 (setq make-backup-files nil)
+
+;; Allow SPC in minibuffer
+(define-key minibuffer-local-completion-map (kbd "SPC") 'self-insert-command)
 
 ;; Be quiet - flash the mode-line instead
 (defun tb-mode-line-visual-bell--flash ()
@@ -144,6 +129,7 @@ apps are not started from a shell."
   (which-function-mode)
   (show-paren-mode)
   (setq fill-column 80)
+  (setq c-basic-offset 4)
   (display-fill-column-indicator-mode))
 (add-hook 'prog-mode-hook 'tb-prog-mode-hook)
 
@@ -153,12 +139,15 @@ apps are not started from a shell."
   (revert-buffer t t t)
   (message (concat "Reverted buffer " (buffer-name))))
 
-;; Rebind C-x C-b to (ibuffer)
+;; ;; Rebind C-x C-b to (ibuffer)
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 
 ;; Bind region commenting globally
 (global-set-key (kbd "C-c C-c") 'comment-region)
 (global-set-key (kbd "C-c C-u") 'uncomment-region)
+
+;; Use swiper instead of isearch-forward
+;; (global-set-key (kbd "C-s") 'swiper)
 
 ;; Open file under cursor
 (global-set-key (kbd "C-x F") 'find-file-at-point)
@@ -276,6 +265,9 @@ apps are not started from a shell."
 (use-package markdown-mode :ensure t)
 
 ;; ############################################################################
+(use-package protobuf-mode :ensure t)
+
+;; ############################################################################
 (use-package git-gutter
   :ensure t
   :config
@@ -294,7 +286,10 @@ apps are not started from a shell."
 (use-package lux-mode :ensure t)
 
 ;; ############################################################################
-(use-package yang-mode :ensure t)
+(use-package yang-mode
+  :ensure t
+  :config
+  (setq c-basic-offset 2))
 
 ;; ############################################################################
 (use-package erlang :ensure t)
@@ -309,34 +304,49 @@ apps are not started from a shell."
   :bind (:map erlang-mode-map
          ("M-." . erlfs-find-source-under-point)
          ("M-," . erlfs-find-source-unwind)
-         ("M-?" . erlfs-find-callers)))
+         ("M-?" . erlfs-find-callers)
+         ("M-\\" . erlfs-find-doc-under-point)))
 
 ;; ############################################################################
-(use-package ido
-  :ensure t
-  :config
-  (setq ido-enable-flex-matching t)
-  (setq ido-everywhere t)
-  (setq confirm-nonexistent-file-or-buffer nil)
-  (setq ido-create-new-buffer 'always)
-  (ido-mode 1))
+ (use-package ido
+   :ensure t
+   :config
+   (setq ido-enable-flex-matching t)
+   (setq ido-everywhere t)
+   (setq confirm-nonexistent-file-or-buffer nil)
+   (setq ido-create-new-buffer 'always)
+   (setq ido-file-extensions-order
+         '(".c" ".h" ".erl" ".hrl" ".py"))
+   (ido-mode 1))
+
+;; ############################################################################
+;; (use-package ivy
+;;   :ensure t
+;;   :config
+;;   ;; (setq ivy-use-virtual-buffers t)
+;;   ;; (setq ivy-count-format "(%d/%d) ")
+;;   (ivy-mode 1))
 
 ;; ############################################################################
 (use-package company
   :ensure t
   :config
+  (setq company-idle-delay 0.3)
   (add-hook 'after-init-hook 'global-company-mode))
 
 ;; ############################################################################
-;; (use-package doom-modeline
-;;   :ensure t
-;;   :hook (after-init . doom-modeline-mode)
-;;   :config
-;;   (setq doom-modeline-vcs-max-length 32))
+(use-package uml-mode
+  :ensure t)
 
 ;; ############################################################################
-(use-package org-superstar
+(use-package org-roam
   :ensure t
+  :bind (("C-c n l" . org-roam-buffer-toggle)
+         ("C-c n f" . org-roam-node-find)
+         ("C-c n i" . org-roam-node-insert)
+         :map org-mode-map
+         ("C-M-i" . completion-at-point))
   :config
-  (org-superstar-configure-like-org-bullets)
-  (add-hook 'org-mode-hook (lambda () (org-superstar-mode 1))))
+  (setq org-roam-directory "~/dev/ext/org-roam")
+  (setq org-roam-completion-everywhere t)
+  (org-roam-db-autosync-enable))
