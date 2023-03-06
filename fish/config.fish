@@ -63,3 +63,4 @@ set fish_color_cwd cyan
 set fish_color_operator yellow
 set fish_color_escape yellow
 set fish_color_autosuggestion 999
+set fish_color_command yellow
