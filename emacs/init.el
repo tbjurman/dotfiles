@@ -1,4 +1,5 @@
 ;; Add MELPA
+(require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 (add-to-list 'package-archives '("gnu" . "https://elpa.gnu.org/packages/") t)
 
@@ -13,8 +14,9 @@
 (load custom-file 'noerror 'nomessage)
 
 ;; Enable use-package
-;; (eval-when-compile
-;;  (add-to-list 'load-path "/Users/tbjurman/dev/ext/use-package")
+(unless (package-installed-p 'use-package)
+  (package-install 'use-package))
+
 (require 'use-package)
 
 ;; === TB CUSTOMIZATION START ===
@@ -66,7 +68,10 @@ apps are not started from a shell."
       (set-exec-path-from-shell-PATH)))
 
 (setq inhibit-startup-screen t)
-(defalias 'yes-or-no-p 'y-or-n-p)
+
+(setq use-short-answers t)
+
+(setq mode-line-compact 'long)
 
 ;; Prefer UTF-8
 (prefer-coding-system 'utf-8)
@@ -116,12 +121,6 @@ apps are not started from a shell."
 ;; Default 4 spaces indentation
 (setq-default c-basic-offset 4)
 
-;; Git-gutter
-(global-git-gutter-mode 1)
-(global-set-key (kbd "M-]") 'git-gutter:next-hunk)
-(global-set-key (kbd "M-[") 'git-gutter:previous-hunk)
-(global-set-key (kbd "M-\\") 'git-gutter:popup-hunk)
-
 ;; Whitespace for programming modes
 (defun tb-prog-mode-hook ()
   (setq whitespace-style '(face trailing tabs lines-tail empty))
@@ -158,6 +157,23 @@ apps are not started from a shell."
 ;; Redraw display
 (global-set-key (kbd "<f1>") 'redraw-display)
 
+;; Sroll up/down N lines
+(defun tb-scroll-n-lines-down (&optional n)
+  "Scroll ahead N lines (1 by default)."
+  (interactive "P")
+  (scroll-down (prefix-numeric-value n))
+  (previous-line))
+
+(defun tb-scroll-n-lines-up (&optional n)
+  "Scroll behind N lines (1 by default)."
+  (interactive "P")
+  (scroll-up (prefix-numeric-value n))
+  (next-line))
+
+(global-set-key (kbd "M-n") 'tb-scroll-n-lines-up)
+(global-set-key (kbd "M-p") 'tb-scroll-n-lines-down)
+
+;; Highligt current line
 (global-hl-line-mode t)
 
 ;; Copy to pasteboard using pbcopy
@@ -198,7 +214,7 @@ apps are not started from a shell."
                       (lambda ()
                         (interactive)
                         (windmove-emacs-or-tmux "left"  "tmux select-pane -L"))))
-  (progn
+  (progn ; GUI emacs
     (global-set-key (kbd "C-s-p")
                     (lambda ()
                       (interactive)
@@ -271,6 +287,11 @@ apps are not started from a shell."
 (use-package git-gutter
   :ensure t
   :config
+  ;; Git-gutter
+  (global-git-gutter-mode 1)
+  (global-set-key (kbd "M-]") 'git-gutter:next-hunk)
+  (global-set-key (kbd "M-[") 'git-gutter:previous-hunk)
+  (global-set-key (kbd "M-\\") 'git-gutter:popup-hunk)
   (setq git-gutter:diff-option "HEAD"))
 
 ;; ############################################################################
@@ -283,7 +304,8 @@ apps are not started from a shell."
   (global-set-key (kbd "C-x g") 'magit-status))
 
 ;; ############################################################################
-(use-package lux-mode :ensure t)
+(use-package lux-mode
+  :ensure t)
 
 ;; ############################################################################
 (use-package yang-mode
@@ -295,17 +317,14 @@ apps are not started from a shell."
 (use-package erlang :ensure t)
 
 ;; ############################################################################
-(use-package tailf)
-
-;; ############################################################################
 (use-package erl-find-source
   :init
   :hook erlang-mode-hook
   :bind (:map erlang-mode-map
          ("M-." . erlfs-find-source-under-point)
          ("M-," . erlfs-find-source-unwind)
-         ("M-?" . erlfs-find-callers)
-         ("M-\\" . erlfs-find-doc-under-point)))
+         ("M-?" . erlfs-find-callers)))
+;;         ("M-\\" . erlfs-find-doc-under-point)))
 
 ;; ############################################################################
  (use-package ido
@@ -317,7 +336,10 @@ apps are not started from a shell."
    (setq ido-create-new-buffer 'always)
    (setq ido-file-extensions-order
          '(".c" ".h" ".erl" ".hrl" ".py"))
-   (ido-mode 1))
+   (ido-mode 1)
+   ;; Use fido vertical completion
+   (fido-vertical-mode t))
+
 
 ;; ############################################################################
 ;; (use-package ivy
@@ -337,6 +359,19 @@ apps are not started from a shell."
 ;; ############################################################################
 (use-package uml-mode
   :ensure t)
+
+;; ############################################################################
+(use-package diredfl
+  :ensure t
+  :config
+  (diredfl-global-mode 1))
+
+(use-package dired-subtree
+  :ensure t
+  :config
+  (bind-keys :map dired-mode-map
+             ("i" . dired-subtree-insert)
+             (";" . dired-subtree-remove)))
 
 ;; ############################################################################
 (use-package org-roam
