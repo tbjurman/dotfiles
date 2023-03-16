@@ -30,11 +30,10 @@
         modus-themes-bold-constructs nil
         modus-themes-region '(bg-only)
         modus-themes-diffs 'desaturated
-        )
+        modus-vivendi-palette-overrides '((bg-main "#222222")))
   :config
-  ;; Load the theme of your choice:
+  (setq modus-themes-common-palette-overrides modus-themes-preset-overrides-faint)
   :bind ("C-c t" . modus-themes-toggle))
-
 (load-theme 'modus-operandi :no-confirm)
 
 
@@ -125,7 +124,7 @@ apps are not started from a shell."
 (defun tb-prog-mode-hook ()
   (setq whitespace-style '(face trailing tabs lines-tail empty))
   (whitespace-mode)
-  (which-function-mode)
+;;  (which-function-mode) ;; Makes vc-diff hang with emacsclient
   (show-paren-mode)
   (setq fill-column 80)
   (setq c-basic-offset 4)
@@ -272,7 +271,7 @@ apps are not started from a shell."
 (use-package graphviz-dot-mode :ensure t)
 
 ;; ############################################################################
-(use-package realgud-lldb :ensure t)
+;; (use-package realgud-lldb :ensure t)
 
 ;; ############################################################################
 (use-package yaml-mode :ensure t)
@@ -374,14 +373,14 @@ apps are not started from a shell."
              (";" . dired-subtree-remove)))
 
 ;; ############################################################################
-(use-package org-roam
-  :ensure t
-  :bind (("C-c n l" . org-roam-buffer-toggle)
-         ("C-c n f" . org-roam-node-find)
-         ("C-c n i" . org-roam-node-insert)
-         :map org-mode-map
-         ("C-M-i" . completion-at-point))
-  :config
-  (setq org-roam-directory "~/dev/ext/org-roam")
-  (setq org-roam-completion-everywhere t)
-  (org-roam-db-autosync-enable))
+;; (use-package org-roam
+;;   :ensure t
+;;   :bind (("C-c n l" . org-roam-buffer-toggle)
+;;          ("C-c n f" . org-roam-node-find)
+;;          ("C-c n i" . org-roam-node-insert)
+;;          :map org-mode-map
+;;          ("C-M-i" . completion-at-point))
+;;   :config
+;;   (setq org-roam-directory "~/dev/ext/org-roam")
+;;   (setq org-roam-completion-everywhere t)
+;;   (org-roam-db-autosync-enable))
