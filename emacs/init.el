@@ -87,6 +87,12 @@ apps are not started from a shell."
 ;; Allow SPC in minibuffer
 (define-key minibuffer-local-completion-map (kbd "SPC") 'self-insert-command)
 
+;; Fido
+(fido-vertical-mode t)
+
+;; Ignore some file extensions when completing file names
+(push ".d" completion-ignored-extensions)
+
 ;; Be quiet - flash the mode-line instead
 (defun tb-mode-line-visual-bell--flash ()
   (let ((frame (selected-frame)))
@@ -309,8 +315,10 @@ apps are not started from a shell."
 ;; ############################################################################
 (use-package yang-mode
   :ensure t
-  :config
-  (setq c-basic-offset 2))
+  :init
+  (add-hook 'yang-mode-hook
+            '(lambda ()
+               (setq c-basic-offset 2))))
 
 ;; ############################################################################
 (use-package erlang :ensure t)
@@ -324,29 +332,6 @@ apps are not started from a shell."
          ("M-," . erlfs-find-source-unwind)
          ("M-?" . erlfs-find-callers)))
 ;;         ("M-\\" . erlfs-find-doc-under-point)))
-
-;; ############################################################################
- (use-package ido
-   :ensure t
-   :config
-   (setq ido-enable-flex-matching t)
-   (setq ido-everywhere t)
-   (setq confirm-nonexistent-file-or-buffer nil)
-   (setq ido-create-new-buffer 'always)
-   (setq ido-file-extensions-order
-         '(".c" ".h" ".erl" ".hrl" ".py"))
-   (ido-mode 1)
-   ;; Use fido vertical completion
-   (fido-vertical-mode t))
-
-
-;; ############################################################################
-;; (use-package ivy
-;;   :ensure t
-;;   :config
-;;   ;; (setq ivy-use-virtual-buffers t)
-;;   ;; (setq ivy-count-format "(%d/%d) ")
-;;   (ivy-mode 1))
 
 ;; ############################################################################
 (use-package company
