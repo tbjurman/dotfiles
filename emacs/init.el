@@ -22,6 +22,8 @@
 ;; === TB CUSTOMIZATION START ===
 
 ;; Style it
+(setq initial-frame-alist '((width . 180) (height . 64)))
+
 (use-package modus-themes
   :ensure t
   :init
@@ -44,8 +46,9 @@
 (menu-bar-mode -1)
 
 (if (display-graphic-p)
-    (progn (toggle-scroll-bar -1)
-           (tool-bar-mode -1)))
+    (progn
+      (toggle-scroll-bar -1)
+      (tool-bar-mode -1)))
 
 ;; Setup exec-path
 (if (display-graphic-p)
