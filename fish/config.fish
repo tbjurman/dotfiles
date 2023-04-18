@@ -2,7 +2,7 @@
 # aliases
 ##############################################################################
 alias pb='ps -ef | grep beam.smp | grep -v grep'
-alias kb='killall beam.smp'
+alias kb='killall -9 beam.smp'
 alias ver='. ~/bin/version.sh'
 alias vim='nvim'
 
