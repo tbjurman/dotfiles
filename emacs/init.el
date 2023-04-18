@@ -1,28 +1,80 @@
+;; Add MELPA
+(require 'package)
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+(add-to-list 'package-archives '("gnu" . "https://elpa.gnu.org/packages/") t)
+
 ;; Added by Package.el.  This must come before configurations of
 ;; installed packages.  Don't delete this line.  If you don't want it,
 ;; just comment it out by adding a semicolon to the start of the line.
 ;; You may delete these explanatory comments.
 (package-initialize)
 
-;; Add MELPA
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-(add-to-list 'package-archives '("gnu" . "https://elpa.gnu.org/packages/") t)
+;; Move customization variables to a separate file and load it
+(setq custom-file (locate-user-emacs-file "custom-vars.el"))
+(load custom-file 'noerror 'nomessage)
 
 ;; Enable use-package
-(eval-when-compile (require 'use-package))
+(unless (package-installed-p 'use-package)
+  (package-install 'use-package))
+
+(require 'use-package)
 
 ;; === TB CUSTOMIZATION START ===
 
 ;; Style it
-;; (use-package solarized-theme :ensure t)
-;; (load-theme 'solarized-light t)
+(setq initial-frame-alist '((width . 180) (height . 64)))
+
+(use-package modus-themes
+  :ensure t
+  :init
+  ;; Add all your customizations prior to loading the themes
+  (setq modus-themes-italic-constructs nil
+        modus-themes-bold-constructs nil
+        modus-themes-region '(bg-only)
+        modus-themes-diffs 'desaturated
+        modus-vivendi-palette-overrides '((bg-main "#222222")))
+  :config
+  (setq modus-themes-common-palette-overrides modus-themes-preset-overrides-faint)
+  :bind ("C-c t" . modus-themes-toggle))
+(load-theme 'modus-operandi :no-confirm)
+
 
 ;; Setup load-path to ~/.emacs.d/local
 (add-to-list 'load-path (expand-file-name "local" user-emacs-directory))
 
 ;; Make it lean and mean
-(menu-bar-mode 0)
-(setq inhibit-startup-screen 1)
+(menu-bar-mode -1)
+
+(if (display-graphic-p)
+    (progn
+      (toggle-scroll-bar -1)
+      (tool-bar-mode -1)))
+
+;; Setup exec-path
+(if (display-graphic-p)
+    (progn
+      (defun set-exec-path-from-shell-PATH ()
+        "Set up Emacs' `exec-path' and PATH environment variable to match
+that used by the user's shell.
+
+This is particularly useful under Mac OS X and macOS, where GUI
+apps are not started from a shell."
+      (interactive)
+      (let ((path-from-shell (replace-regexp-in-string
+                              "[ \t\n]*$" "" (shell-command-to-string
+                                              "$SHELL --login -c 'echo $PATH'"
+                                              ))))
+        (message path-from-shell)
+        (setenv "PATH" path-from-shell)
+        (setq exec-path (split-string path-from-shell path-separator))))
+      (set-exec-path-from-shell-PATH)))
+
+(setq inhibit-startup-screen t)
+
+(setq use-short-answers t)
+
+(setq mode-line-compact 'long)
+
 (defalias 'yes-or-no-p 'y-or-n-p)
 
 ;; Prefer UTF-8
@@ -37,6 +89,33 @@
 ;; Turn off backup files
 (setq make-backup-files nil)
 
+;; Allow SPC in minibuffer
+(define-key minibuffer-local-completion-map (kbd "SPC") 'self-insert-command)
+
+;; Fido
+;; (fido-vertical-mode t)
+
+;; Ignore some file extensions when completing file names
+(push ".d" completion-ignored-extensions)
+
+;; Be quiet - flash the mode-line instead
+(defun tb-mode-line-visual-bell--flash ()
+  (let ((frame (selected-frame)))
+    (run-with-timer
+     0.1 nil
+     (lambda (frame)
+       (let ((inhibit-quit)
+             (inhibit-redisplay t))
+         (invert-face 'mode-line frame)
+         (invert-face 'mode-line-inactive frame)))
+     frame)
+    (let ((inhibit-quit)
+          (inhibit-redisplay t))
+      (invert-face 'mode-line frame)
+      (invert-face 'mode-line-inactive frame))))
+
+(setq ring-bell-function 'tb-mode-line-visual-bell--flash)
+
 ;; Remeber file positions
 (save-place-mode 1)
 
@@ -46,21 +125,21 @@
 ;; Line numbers
 (global-display-line-numbers-mode t)
 
-;; Column number in status bar
+;; Colmn number in status bar
 (column-number-mode)
 
-;; Git-gutter
-(global-git-gutter-mode 1)
-(global-set-key (kbd "M-]") 'git-gutter:next-hunk)
-(global-set-key (kbd "M-[") 'git-gutter:previous-hunk)
-(global-set-key (kbd "M-\\") 'git-gutter:popup-hunk)
+;; Default 4 spaces indentation
+(setq-default c-basic-offset 4)
 
 ;; Whitespace for programming modes
 (defun tb-prog-mode-hook ()
   (setq whitespace-style '(face trailing tabs lines-tail empty))
   (whitespace-mode)
-  (which-function-mode)
-  (show-paren-mode))
+;;  (which-function-mode) ;; Makes vc-diff hang with emacsclient
+  (show-paren-mode)
+  (setq fill-column 80)
+  (setq c-basic-offset 4)
+  (display-fill-column-indicator-mode))
 (add-hook 'prog-mode-hook 'tb-prog-mode-hook)
 
 ;; Revert buffer
@@ -76,6 +155,9 @@
 (global-set-key (kbd "C-c C-c") 'comment-region)
 (global-set-key (kbd "C-c C-u") 'uncomment-region)
 
+;; Use swiper instead of isearch-forward
+;; (global-set-key (kbd "C-s") 'swiper)
+
 ;; Open file under cursor
 (global-set-key (kbd "C-x F") 'find-file-at-point)
 
@@ -85,57 +167,104 @@
 ;; Redraw display
 (global-set-key (kbd "<f1>") 'redraw-display)
 
-;; Horizontal line
-(setq global-hl-line-sticky-mode t)
+;; Sroll up/down N lines
+(defun tb-scroll-n-lines-down (&optional n)
+  "Scroll ahead N lines (1 by default)."
+  (interactive "P")
+  (scroll-down (prefix-numeric-value n))
+  (previous-line))
+
+(defun tb-scroll-n-lines-up (&optional n)
+  "Scroll behind N lines (1 by default)."
+  (interactive "P")
+  (scroll-up (prefix-numeric-value n))
+  (next-line))
+
+(global-set-key (kbd "M-n") 'tb-scroll-n-lines-up)
+(global-set-key (kbd "M-p") 'tb-scroll-n-lines-down)
+
+;; Highligt current line
 (global-hl-line-mode t)
 
-;; Default 4 spaces indentation
-(setq-default c-basic-offset 4)
-
-;; Copy to remote using rpbcopy
-(defun tb-rpbcopy (text &optional push)
+;; Copy to pasteboard using pbcopy
+(defun tb-pbcopy (text &optional push)
   (let ((process-connection-type nil))
     (let ((proc (start-process "rpb-copy" nil "rpb")))
       (process-send-string proc text)
       (process-send-eof proc))))
-(setq interprogram-cut-function 'tb-rpbcopy)
+(setq interprogram-cut-function 'tb-pbcopy)
 
-;; Paste from remote using rpb
-(defun tb-rpbpaste ()
+(defun tb-pbpaste ()
   (shell-command-to-string "rpb p"))
-(setq interprogram-paste-function 'tb-rpbpaste)
+(setq interprogram-paste-function 'tb-pbpaste)
 
 ;; Window move together with tmux
-(defun windmove-emacs-or-tmux(dir tmux-cmd)
-  (interactive)
-  (if (ignore-errors (funcall (intern (concat "windmove-" dir))))
-      nil ;; Moving within emacs
-    (shell-command tmux-cmd)) ;; At edges, send command to tmux
-  )
+(if (not (display-graphic-p))
+    (progn
+      (defun windmove-emacs-or-tmux(dir tmux-cmd)
+        (interactive)
+        (if (ignore-errors (funcall (intern (concat "windmove-" dir))))
+            nil ;; Moving within emacs
+          (shell-command tmux-cmd)) ;; At edges, send command to tmux
+        )
 
-(global-set-key (kbd "M-P")
-                '(lambda ()
-                   (interactive)
-                   (windmove-emacs-or-tmux "up" "tmux select-pane -U")))
-(global-set-key (kbd "M-N")
-                '(lambda ()
-                   (interactive)
-                   (windmove-emacs-or-tmux "down" "tmux select-pane -D")))
-(global-set-key (kbd "M-F")
-                '(lambda ()
-                   (interactive)
-                   (windmove-emacs-or-tmux "right" "tmux select-pane -R")))
-(global-set-key (kbd "M-B")
-                '(lambda ()
-                   (interactive)
-                   (windmove-emacs-or-tmux "left"  "tmux select-pane -L")))
-
+      (global-set-key (kbd "M-P")
+                      (lambda ()
+                        (interactive)
+                        (windmove-emacs-or-tmux "up" "tmux select-pane -U")))
+      (global-set-key (kbd "M-N")
+                      (lambda ()
+                        (interactive)
+                        (windmove-emacs-or-tmux "down" "tmux select-pane -D")))
+      (global-set-key (kbd "M-F")
+                      (lambda ()
+                        (interactive)
+                        (windmove-emacs-or-tmux "right" "tmux select-pane -R")))
+      (global-set-key (kbd "M-B")
+                      (lambda ()
+                        (interactive)
+                        (windmove-emacs-or-tmux "left"  "tmux select-pane -L"))))
+  (progn ; GUI emacs
+    (global-set-key (kbd "C-s-p")
+                    (lambda ()
+                      (interactive)
+                      (windmove-up)))
+    (global-set-key (kbd "C-s-n")
+                    (lambda ()
+                      (interactive)
+                      (windmove-down)))
+    (global-set-key (kbd "C-s-f")
+                    (lambda ()
+                      (interactive)
+                      (windmove-right)))
+    (global-set-key (kbd "C-s-b")
+                    (lambda ()
+                      (interactive)
+                      (windmove-left)))))
 
 ;; --- Vim style stuff (begin) ---------------------------------------
+;; Open new line below like Vim(tm) does
+;; (defun tb-open-line-below ()
+;;   "Open a new line below the current point and indent."
+;;   (interactive)
+;;   (let ((oldpos (point)))
+;;     (end-of-line)
+;;     (newline-and-indent)))
+
+;; ;; Open new line above like Vim(tm) does
+;; (defun tb-open-line-above ()
+;;   "Open a new line above the current line and indent."
+;;   (interactive)
+;;   (let ((oldpos (point)))
+;;     (previous-line)
+;;     (end-of-line)
+;;     (newline-and-indent)))
+
+;; Join line below point with current line
 (defun tb-join-line-below ()
   "Joins the line below point with the current line."
   (interactive)
-  (move-end-of-line nil)
+  (end-of-line)
   (delete-char 1)
   (just-one-space))
 
@@ -143,56 +272,8 @@
 (global-set-key (kbd "M-j") 'tb-join-line-below)
 ;; --- Vim style stuff (end) -----------------------------------------
 
-
 ;; ############################################################################
-(use-package flycheck :ensure t)
-;; ############################################################################
-(use-package lsp-mode
-  :ensure
-  :commands lsp
-  :custom
-  ;; what to use when checking on-save. "check" is default, I prefer clippy
-  (lsp-rust-analyzer-cargo-watch-command "clippy")
-  (lsp-eldoc-render-all t)
-  (lsp-idle-delay 0.6)
-  (lsp-rust-analyzer-server-display-inlay-hints nil)
-  :config
-  (add-hook 'lsp-mode-hook 'lsp-ui-mode))
-
-;; ############################################################################
-(use-package lsp-ui
-  :ensure
-  :commands lsp-ui-mode
-  :custom
-  (lsp-ui-peek-always-show t)
-  (lsp-ui-sideline-show-hover nil)
-  (lsp-ui-doc-enable nil))
-
-;; ############################################################################
-(use-package rustic
-  :ensure t
-  :bind (:map rustic-mode-map
-              ("M-j" . lsp-ui-imenu)
-              ("M-?" . lsp-find-references)
-              ("C-c C-c l" . flycheck-list-errors)
-              ("C-c C-c a" . lsp-execute-code-action)
-              ("C-c C-c r" . lsp-rename)
-              ("C-c C-c q" . lsp-workspace-restart)
-              ("C-c C-c Q" . lsp-workspace-shutdown)
-              ("C-c C-c s" . lsp-rust-analyzer-status))
-  :config
-  ;; uncomment for less flashiness
-  (setq lsp-eldoc-hook nil)
-  (setq lsp-enable-symbol-highlighting nil)
-  (setq lsp-signature-auto-activate nil)
-
-  ;; comment to disable rustfmt on save
-  (setq rustic-format-on-save t)
-  (add-hook 'rustic-mode-hook 'rk/rustic-mode-hook))
-
-(defun rk/rustic-mode-hook ()
-  ;; so that run C-c C-c C-r works without having to confirm
-  (setq-local buffer-save-without-query t))
+(use-package rust-mode :ensure t)
 
 ;; ############################################################################
 (use-package sql-indent :ensure t)
@@ -201,7 +282,7 @@
 (use-package graphviz-dot-mode :ensure t)
 
 ;; ############################################################################
-(use-package realgud-lldb :ensure t)
+;; (use-package realgud-lldb :ensure t)
 
 ;; ############################################################################
 (use-package yaml-mode :ensure t)
@@ -210,16 +291,21 @@
 (use-package markdown-mode :ensure t)
 
 ;; ############################################################################
+(use-package protobuf-mode :ensure t)
+
+;; ############################################################################
 (use-package git-gutter
   :ensure t
   :config
+  ;; Git-gutter
+  (global-git-gutter-mode 1)
+  (global-set-key (kbd "M-]") 'git-gutter:next-hunk)
+  (global-set-key (kbd "M-[") 'git-gutter:previous-hunk)
+  (global-set-key (kbd "M-\\") 'git-gutter:popup-hunk)
   (setq git-gutter:diff-option "HEAD"))
 
 ;; ############################################################################
-(use-package smex
-  :ensure t
-  :bind (("M-x" . smex))
-  :config (smex-initialize))
+(use-package smex :ensure t)
 
 ;; ############################################################################
 (use-package magit
@@ -228,142 +314,63 @@
   (global-set-key (kbd "C-x g") 'magit-status))
 
 ;; ############################################################################
-(use-package lux-mode :ensure t)
+(use-package lux-mode
+  :ensure t)
 
 ;; ############################################################################
-(use-package yang-mode :ensure t)
-
-(defun my-yang-mode-hook ()
-  "Configuration for YANG Mode. Add this to `yang-mode-hook'."
-  (progn
-    (setq c-basic-offset 2)))
-(add-hook 'yang-mode-hook 'my-yang-mode-hook)
+(use-package yang-mode
+  :ensure t
+  :init
+  (add-hook 'yang-mode-hook
+            '(lambda ()
+               (setq c-basic-offset 2))))
 
 ;; ############################################################################
 (use-package erlang :ensure t)
 
 ;; ############################################################################
-(use-package ido
-  :ensure t
-  :config
-  (setq ido-enable-flex-matching t)
-  (setq ido-everywhere t)
-  (setq confirm-nonexistent-file-or-buffer nil)
-  (setq ido-create-new-buffer 'always)
-  (ido-mode 1))
+(use-package erl-find-source
+  :init
+  :hook erlang-mode-hook
+  :bind (:map erlang-mode-map
+         ("M-." . erlfs-find-source-under-point)
+         ("M-," . erlfs-find-source-unwind)
+         ("M-?" . erlfs-find-callers)))
+;;         ("M-\\" . erlfs-find-doc-under-point)))
 
 ;; ############################################################################
 (use-package company
   :ensure t
   :config
+  (setq company-idle-delay 0.3)
   (add-hook 'after-init-hook 'global-company-mode))
 
 ;; ############################################################################
-(use-package cc-mode
-  :config
-  (setq c-basic-offset 4))
+(use-package uml-mode
+  :ensure t)
 
 ;; ############################################################################
-;; Styling
- (use-package whitespace
-   :config
-   (set-face-attribute 'whitespace-tab nil :foreground "#fcfcfc")
-   (set-face-attribute 'whitespace-line nil :background "#eeeeee"))
-(use-package faces
+(use-package diredfl
+  :ensure t
   :config
-  (set-face-attribute 'region nil :background "#ced872" :foreground "#000000"))
-(use-package isearch
+  (diredfl-global-mode 1))
+
+(use-package dired-subtree
+  :ensure t
   :config
-  (set-face-attribute 'isearch nil :background "#ced872" :foreground "#000000"))
-(use-package ediff
-  :config
-  (setq ediff-split-window-function 'split-window-horizontally))
-(use-package font-lock
-  :config
-  (set-face-attribute 'font-lock-comment-face nil :foreground "color-246"))
-;; Dark Mode
-(use-package diff-mode
-  :config
-  (set-face-attribute 'diff-added nil :foreground "#000000" :background "#99cc99")
-  (set-face-attribute 'diff-removed nil :foreground "#000000" :background "#d07c7c"))
+  (bind-keys :map dired-mode-map
+             ("i" . dired-subtree-insert)
+             (";" . dired-subtree-remove)))
 
-;; -----------------------------------------------------------------------------
-;; -----------------------------------------------------------------------------
-;; -----------------------------------------------------------------------------
-;;  A hash table mapping from file names to stacks of vc-annotate calls
-(defvar vc-annotate-call-stacks (make-hash-table :test 'equal))
-
-;; Define a structure type to store the details needed to redisplay a revision
-;; rev: the revision annotated
-;; point: the cursor point when the annotation was first displayed (perhaps this
-;;        could be improved to be the last point moved to on the annotation)
-(require 'cl-lib)
-(cl-defstruct annotation-details rev point)
-
-;; The vc-annotate-mode-hook can't be used because it is run before
-;; the vc-annotate-parent-* variables are set.
-;;
-;; So instead use a advise function for vc-annotate, called before
-;; vc-annotate, which stores the arguments on the appropriate stack.
-(defun record-annotation-call (file rev &optional display-mode buf move-point-to vc-bk)
-  (message "Recording annotation: file %S rev %S" file rev)
-  (let ((annotation-stack (gethash file vc-annotate-call-stacks)))
-    (push (make-annotation-details :rev rev
-                                   :point move-point-to)
-          annotation-stack)
-    (puthash file annotation-stack vc-annotate-call-stacks)))
-
-;; DISABLED!!!
-;; (advice-add 'vc-annotate :before #'record-annotation-call)
-
-(defun vc-annotate-previous-annotation ()
-  "Go back to showing the annotation of the previous displayed annotation"
-  (interactive)
-  (when (not (equal major-mode 'vc-annotate-mode))
-    (error "Can only be used in vc-annotate-mode"))
-  (let ((annotation-stack (gethash vc-annotate-parent-file vc-annotate-call-stacks)))
-       (when (< (length annotation-stack) 2)
-         (error "No previous vc-annotate calls"))
-       ;; The entry at the top of the stack is the current annotation.
-       ;; So need to pop two entries to get the previous annotation.
-       (let
-           ((curr-annotation (pop annotation-stack))
-            (prev-annotation (pop annotation-stack)))
-         ;; Update the annotation-stack in the hash table after removing the entries.
-         ;; The entry for the one we're returning to will be re-added by
-         ;; the advise function for vc-annotate.
-         (puthash vc-annotate-parent-file annotation-stack vc-annotate-call-stacks)
-
-         (vc-annotate vc-annotate-parent-file
-                      (annotation-details-rev prev-annotation)
-                      vc-annotate-parent-display-mode
-                      (current-buffer)
-                      (annotation-details-point prev-annotation)
-                      vc-annotate-backend))))
-
-
-;; -----------------------------------------------------------------------------
-(add-hook 'vc-annotate-mode-hook
-  (lambda ()
-   (local-set-key (kbd "b") 'vc-annotate-previous-annotation)))
-
-;; Configure
-
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(font-lock-comment-face ((t (:foreground "color-246" :slant italic))))
- '(line-number ((t (:inherit (shadow default) :foreground "grey"))))
- '(line-number-current-line ((t (:inherit line-number :foreground "black")))))
-
-
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   (quote
-    (yang-mode yaml-mode use-package sql-indent solarized-theme smex rustic rust-mode realgud-lldb plantuml-mode magit lux-mode lsp-ui ivy graphviz-dot-mode git-gutter flycheck erlang creamsody-theme company base16-theme ahungry-theme))))
+;; ############################################################################
+;; (use-package org-roam
+;;   :ensure t
+;;   :bind (("C-c n l" . org-roam-buffer-toggle)
+;;          ("C-c n f" . org-roam-node-find)
+;;          ("C-c n i" . org-roam-node-insert)
+;;          :map org-mode-map
+;;          ("C-M-i" . completion-at-point))
+;;   :config
+;;   (setq org-roam-directory "~/dev/ext/org-roam")
+;;   (setq org-roam-completion-everywhere t)
+;;   (org-roam-db-autosync-enable))
