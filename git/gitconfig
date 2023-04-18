@@ -24,3 +24,5 @@
 	renamelimit = 20480
 [status]
         showUntrackedFiles = no
+[init]
+	defaultBranch = main
