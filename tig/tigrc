@@ -1,6 +1,10 @@
 set main-view  = line-number:no,interval=5 id:yes date:default author:full commit-title:yes,graph,refs,overflow=no
 #set line-graphics = utf-8
 
+set show-untracked = false
+
+set main-view = id date author:full,width=30 commit-title:graph=v1,refs
+
 bind main C ?git cherry-pick -x %(commit)
 bind diff <Ctrl-f> scroll-page-down
 bind diff <Ctrl-b> scroll-page-up
