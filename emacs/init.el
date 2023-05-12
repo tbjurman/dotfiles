@@ -327,6 +327,13 @@ apps are not started from a shell."
 (use-package zig-mode :ensure t)
 
 ;; ############################################################################
+(use-package lsp-mode
+  :ensure t
+  :commands (lsp lsp-deferred))
+
+(use-package lsp-ui :ensure t)
+
+;; ############################################################################
 (use-package erlang :ensure t)
 
 ;; ############################################################################
