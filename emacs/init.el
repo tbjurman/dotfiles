@@ -22,7 +22,7 @@
 ;; === TB CUSTOMIZATION START ===
 
 ;; Style it
-(setq initial-frame-alist '((width . 180) (height . 64)))
+;; (setq initial-frame-alist '((width . 180) (height . 64)))
 
 (use-package modus-themes
   :ensure t
@@ -330,7 +330,9 @@ apps are not started from a shell."
 ;; ############################################################################
 (use-package lsp-mode
   :ensure t
-  :commands (lsp lsp-deferred))
+  :init
+  (setq lsp-keymap-prefix "C-c C-l")
+  :commands (lsp))
 
 (use-package lsp-ui :ensure t)
 
