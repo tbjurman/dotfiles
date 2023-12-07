@@ -32,11 +32,12 @@
         modus-themes-bold-constructs nil
         modus-themes-region '(bg-only)
         modus-themes-diffs 'desaturated
-        modus-vivendi-palette-overrides '((bg-main "#222222")))
+        modus-vivendi-palette-overrides '((bg-main "#222222"))
+        modus-themes-to-toggle '(modus-operandi-tinted modus-vivendi))
   :config
   (setq modus-themes-common-palette-overrides modus-themes-preset-overrides-faint)
   :bind ("C-c t" . modus-themes-toggle))
-(load-theme 'modus-operandi :no-confirm)
+(load-theme 'modus-operandi-tinted :no-confirm)
 
 
 ;; Setup load-path to ~/.emacs.d/local
