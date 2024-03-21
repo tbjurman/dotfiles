@@ -32,11 +32,12 @@
         modus-themes-bold-constructs nil
         modus-themes-region '(bg-only)
         modus-themes-diffs 'desaturated
+        modus-themes-to-toggle '(modus-operandi-tinted modus-vivendi)
         modus-vivendi-palette-overrides '((bg-main "#222222")))
   :config
   (setq modus-themes-common-palette-overrides modus-themes-preset-overrides-faint)
   :bind ("C-c t" . modus-themes-toggle))
-(load-theme 'modus-operandi :no-confirm)
+(load-theme 'modus-operandi-tinted :no-confirm)
 
 
 ;; Setup load-path to ~/.emacs.d/local
@@ -324,6 +325,13 @@ apps are not started from a shell."
   (add-hook 'yang-mode-hook
             '(lambda ()
                (setq c-basic-offset 2))))
+
+;; ############################################################################
+(use-package zig-mode :ensure t)
+
+;; ############################################################################
+(use-package lsp-mode :ensure t)
+(use-package lsp-ui :ensure t)
 
 ;; ############################################################################
 (use-package erlang :ensure t)

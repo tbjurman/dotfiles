@@ -61,3 +61,6 @@ set fish_color_operator yellow
 set fish_color_escape yellow
 set fish_color_command yellow # for dark theme
 # (for light theme) set fish_color_autosuggestion 999
+
+# opam configuration
+source /home/tbjurman/.opam/opam-init/init.fish > /dev/null 2> /dev/null; or true
