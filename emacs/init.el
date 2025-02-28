@@ -36,7 +36,7 @@
         modus-vivendi-palette-overrides '((bg-main "#272727")))
   (setq modus-themes-common-palette-overrides modus-themes-preset-overrides-faint)
   :bind ("C-c t" . modus-themes-toggle))
-(load-theme 'modus-operandi-tinted :no-confirm)
+(load-theme 'modus-vivendi :no-confirm)
 
 
 ;; Setup load-path to ~/.emacs.d/local
