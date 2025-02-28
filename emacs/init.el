@@ -26,15 +26,14 @@
 
 (use-package modus-themes
   :ensure t
-  :init
+  :config
   ;; Add all your customizations prior to loading the themes
   (setq modus-themes-italic-constructs nil
         modus-themes-bold-constructs nil
         modus-themes-region '(bg-only)
         modus-themes-diffs 'desaturated
         modus-themes-to-toggle '(modus-operandi-tinted modus-vivendi)
-        modus-vivendi-palette-overrides '((bg-main "#222222")))
-  :config
+        modus-vivendi-palette-overrides '((bg-main "#272727")))
   (setq modus-themes-common-palette-overrides modus-themes-preset-overrides-faint)
   :bind ("C-c t" . modus-themes-toggle))
 (load-theme 'modus-operandi-tinted :no-confirm)
@@ -98,6 +97,7 @@ apps are not started from a shell."
 
 ;; Ignore some file extensions when completing file names
 (push ".d" completion-ignored-extensions)
+(push ".gcno" completion-ignored-extensions)
 
 ;; Be quiet - flash the mode-line instead
 (defun tb-mode-line-visual-bell--flash ()
@@ -369,6 +369,11 @@ apps are not started from a shell."
   (bind-keys :map dired-mode-map
              ("i" . dired-subtree-insert)
              (";" . dired-subtree-remove)))
+
+(use-package clang-format
+  :ensure t
+  :config
+  (setq clang-format-style "file"))
 
 ;; ############################################################################
 ;; (use-package org-roam
