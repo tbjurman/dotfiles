@@ -187,16 +187,16 @@ apps are not started from a shell."
 ;; Highligt current line
 (global-hl-line-mode t)
 
-;; Copy to pasteboard using pbcopy
+;; Copy to pasteboard using xsel
 (defun tb-pbcopy (text &optional push)
   (let ((process-connection-type nil))
-    (let ((proc (start-process "rpb-copy" nil "rpb")))
+    (let ((proc (start-process "xsel-copy" nil "xsel" "-i" "-b")))
       (process-send-string proc text)
       (process-send-eof proc))))
 (setq interprogram-cut-function 'tb-pbcopy)
 
 (defun tb-pbpaste ()
-  (shell-command-to-string "rpb p"))
+  (shell-command-to-string "xsel -o -b"))
 (setq interprogram-paste-function 'tb-pbpaste)
 
 ;; Window move together with tmux
