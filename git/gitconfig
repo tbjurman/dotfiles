@@ -1,6 +1,6 @@
 [user]
     name = Tomas Bjurman
-    email = tbjurman@cisco.com
+    email = tbjurman@gmail.com
 [alias]
     st = status -uno
     ; hist = log --oneline --graph --decorate
@@ -14,7 +14,7 @@
 [pull]
     ff = only
 [core]
-    excludesfile = /Users/tbjurman/.gitignore
+    excludesfile = /home/tbjurman/.gitignore
 #    pager = less --chop-long-lines
 [diff]
 	tool = vimdiff
