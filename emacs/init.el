@@ -374,6 +374,18 @@ apps are not started from a shell."
              (";" . dired-subtree-remove)))
 
 ;; ############################################################################
+(use-package copilot
+  :ensure t
+  :vc (:url "https://github.com/copilot-emacs/copilot.el"
+            :rev :newest
+            :branch "main"))
+
+(use-package copilot-chat
+  :ensure t
+  :init
+  (setq copilot-chat-frontend 'markdown))
+
+;; ############################################################################
 ;; (use-package org-roam
 ;;   :ensure t
 ;;   :bind (("C-c n l" . org-roam-buffer-toggle)
