@@ -14,10 +14,10 @@
 (load custom-file 'noerror 'nomessage)
 
 ;; Enable use-package
-(unless (package-installed-p 'use-package)
-  (package-install 'use-package))
+;; (unless (package-installed-p 'use-package)
+;;   (package-install 'use-package))
 
-(require 'use-package)
+;; (require 'use-package)
 
 ;; === TB CUSTOMIZATION START ===
 
