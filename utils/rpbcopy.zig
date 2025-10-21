@@ -8,29 +8,29 @@ const PORT: u16 = 10001;
 const BUFSIZE = 8192;
 
 pub fn main() !void {
-    // const port = parsePortArg();
-
-    var listener = std.net.StreamServer.init(.{
-        .reuse_address = true,
-    });
-    const listen_address = try std.net.Address.resolveIp(IP, PORT);
-    try listener.listen(listen_address);
+    var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
+    defer arena.deinit();
+    const allocator = arena.allocator();
+    const addr = try std.net.Address.resolveIp(IP, PORT);
+    var listener = try addr.listen(.{});
 
     while (true) {
         if (listener.accept()) |conn| {
             defer conn.stream.close();
-            try handle_connection(conn.stream);
+            try handle_connection(conn.stream, allocator);
         } else |_| {}
     }
 }
 
-pub fn handle_connection(stream: Stream) !void {
+pub fn handle_connection(stream: Stream, allocator: std.mem.Allocator) !void {
     var buf: [BUFSIZE]u8 = undefined;
-    var size = try stream.readAll(&buf);
+    const size = try stream.read(&buf);
     if (is_paste(buf[0..])) {
-        try read_from_clipboard(stream); // we are pasting
+        // we are pasting
+        try read_from_clipboard(stream, allocator);
     } else {
-        try write_to_clipboard(stream, &buf, size); // we are copying
+        // we are copying
+        try write_to_clipboard(stream, &buf, size, allocator);
     }
 }
 
@@ -44,34 +44,24 @@ fn is_paste(buf: []const u8) bool {
     return false;
 }
 
-fn read_from_clipboard(stream: Stream) !void {
-    var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
-    defer arena.deinit();
-    var allocator = arena.allocator();
-    const exec_args = .{
+fn read_from_clipboard(stream: Stream, allocator: std.mem.Allocator) !void {
+    const res = try std.process.Child.run(.{
         .allocator = allocator,
         .argv = &[_][]const u8{"pbpaste"},
-    };
+    });
+    defer allocator.free(res.stdout);
+    defer allocator.free(res.stderr);
 
-    if (std.process.Child.exec(exec_args)) |res| {
-        defer allocator.free(res.stdout);
-        defer allocator.free(res.stderr);
-        if (res.stdout.len > 0) {
-            try stream.writeAll(res.stdout);
-        }
-    } else |err| switch (err) {
-        error.StdoutStreamTooLong => {
-            try stream.writeAll("error: too much data in clipboard");
-        },
-        else => return err,
-    }
-    try std.os.shutdown(stream.handle, std.os.ShutdownHow.send);
+    try stream.writeAll(res.stdout);
+    try std.posix.shutdown(stream.handle, std.posix.ShutdownHow.send);
 }
 
-fn write_to_clipboard(stream: Stream, buf: []u8, size0: usize) !void {
-    var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
-    defer arena.deinit();
-    var allocator = arena.allocator();
+fn write_to_clipboard(
+    stream: Stream,
+    buf: []u8,
+    size0: usize,
+    allocator: std.mem.Allocator,
+) !void {
     const argv: []const []const u8 = &[_][]const u8{"pbcopy"};
 
     var child = std.process.Child.init(argv, allocator);
@@ -81,26 +71,9 @@ fn write_to_clipboard(stream: Stream, buf: []u8, size0: usize) !void {
     var size = size0;
     while (size > 0) {
         try child.stdin.?.writeAll(buf[0..size]);
-        size = try stream.readAll(buf);
+        size = try stream.read(buf);
     }
     child.stdin.?.close();
     child.stdin = null;
     _ = try child.wait();
 }
-
-// fn parsePortArg() {
-//     var args_iter = std.process.args();
-//     var port: u16 = undefined;
-
-//     if (args_iter.next()) |x| {
-//         print("{s}\n", .{x});
-//         if (args_iter.next()) |strport| {
-//             print("{s}\n", .{strport});
-//             port = try std.fmt.parseInt(u16, strport, 10);
-//         }
-//     }
-//     if (port == undefined) {
-//         std.debug.print("Usage: rpbcopy PORT\n", .{});
-//         std.process.exit(1);
-//     }
-// }
