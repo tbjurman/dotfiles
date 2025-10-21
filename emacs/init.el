@@ -341,7 +341,6 @@ apps are not started from a shell."
 
 ;; ############################################################################
 (use-package erl-find-source
-  :init
   :hook erlang-mode-hook
   :bind (:map erlang-mode-map
          ("M-." . erlfs-find-source-under-point)
